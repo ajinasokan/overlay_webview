@@ -120,6 +120,7 @@ class WebViewController {
       _load = null;
       _events.add(PageDenyEvent._(
         key: data["data"]["key"],
+        url: data["data"]["url"],
         canGoBack: data["data"]["can_go_back"],
         canGoForward: data["data"]["can_go_forward"],
       ));

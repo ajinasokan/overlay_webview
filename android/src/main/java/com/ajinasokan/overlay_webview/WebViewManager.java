@@ -164,7 +164,7 @@ public class WebViewManager {
                         final String key = keys[i].toString();
                         plugin.sendEvent(webViewID,"page_deny", new HashMap<String, Object>(){ {
                             put("key", key);
-
+                            put("url", url);
                             put("can_go_back", view.canGoBack());
                             put("can_go_forward", view.canGoForward());
                         }});

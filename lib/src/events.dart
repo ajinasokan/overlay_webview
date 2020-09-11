@@ -61,11 +61,13 @@ class PageProgressEvent extends WebViewEvent {
 /// Event fired when WebView blocks a URL specified in the [WebViewController.setDenyList]
 class PageDenyEvent extends WebViewEvent {
   final String key;
+  final String url;
   final bool canGoBack;
   final bool canGoForward;
 
   PageDenyEvent._({
     this.key,
+    this.url,
     this.canGoBack,
     this.canGoForward,
   });
