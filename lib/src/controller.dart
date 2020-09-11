@@ -104,7 +104,7 @@ class WebViewController {
       _load = null;
       _events.add(PageErrorEvent._(
         url: data["data"]["url"],
-        errorCode: data["data"]["code"],
+        errorCode: data["data"]["code"].toString(),
         errorDescription: data["data"]["description"],
         canGoBack: data["data"]["can_go_back"],
         canGoForward: data["data"]["can_go_forward"],

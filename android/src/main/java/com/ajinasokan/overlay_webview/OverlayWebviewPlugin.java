@@ -75,7 +75,7 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
         webviews.get(id).dispose();
         webviews.remove(id);
       }
-      return;
+      result.success(null);
     }  else {
       result.notImplemented();
       return;
