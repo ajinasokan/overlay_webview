@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -71,11 +73,13 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
       result.success(webViewIDs);
       return;
     } else if (call.method.equals("disposeAll")) {
-      for (String id: webviews.keySet()) {
-        webviews.get(id).dispose();
-        webviews.remove(id);
+      Iterator it = webviews.keySet().iterator();
+      while (it.hasNext())
+      {
+        String item = (String) it.next();
+        webviews.get(item).dispose();
+        it.remove();
       }
-      result.success(null);
     }  else {
       result.notImplemented();
       return;
