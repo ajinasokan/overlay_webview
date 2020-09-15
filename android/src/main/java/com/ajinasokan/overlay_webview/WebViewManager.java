@@ -75,20 +75,20 @@ public class WebViewManager {
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setAppCacheEnabled(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            WebView.setWebContentsDebuggingEnabled(true);
-        }
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+        //     WebView.setWebContentsDebuggingEnabled(true);
+        // }
+        // webView.getSettings().setLoadWithOverviewMode(true);
+        // webView.getSettings().setUseWideViewPort(true);
 
-        webView.getSettings().setSupportZoom(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-        webView.getSettings().setDisplayZoomControls(false);
+        // webView.getSettings().setSupportZoom(true);
+        // webView.getSettings().setBuiltInZoomControls(true);
+        // webView.getSettings().setDisplayZoomControls(false);
 
-        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        webView.setScrollbarFadingEnabled(false);
+        // webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        // webView.setScrollbarFadingEnabled(false);
 
-        webView.getSettings().setUserAgentString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36");
+        // webView.getSettings().setUserAgentString("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36");
 
         webView.setWebViewClient(new WebViewClient() {
             @Override
