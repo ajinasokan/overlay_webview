@@ -221,7 +221,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     }
     
     public func webView(_ _: WKWebView, didFinish navigation: WKNavigation!) {
-        plugin.sendEvent(id: id, type: "page_finished", data: [
+        plugin.sendEvent(id: id, type: "page_end", data: [
             "url": webview!.url!.absoluteString,
             "can_go_back": webview!.canGoBack,
             "can_go_forward": webview!.canGoBack,
@@ -229,7 +229,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     }
     
     public func webView(_ _: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        plugin.sendEvent(id: id, type: "page_started", data: [
+        plugin.sendEvent(id: id, type: "page_start", data: [
             "url": webview!.url!.absoluteString,
             "can_go_back": webview!.canGoBack,
             "can_go_forward": webview!.canGoBack,
