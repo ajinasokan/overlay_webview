@@ -122,7 +122,7 @@ public class SwiftOverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHa
 public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKScriptMessageHandler {
     let plugin: SwiftOverlayWebviewPlugin
     let id : String
-    let webview : WKWebView
+    var webview : WKWebView?
     
     var denyPatterns: Dictionary<String, String>?
     
@@ -150,11 +150,11 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         
         userController.add(self, name: "WebViewBridge")
         
-        webview.navigationDelegate = self
-        webview.uiDelegate = self
-        webview.isOpaque = true
-        webview.backgroundColor = UIColor.clear
-        webview.scrollView.backgroundColor = UIColor.clear
+        webview!.navigationDelegate = self
+        webview!.uiDelegate = self
+        webview!.isOpaque = true
+        webview!.backgroundColor = UIColor.clear
+        webview!.scrollView.backgroundColor = UIColor.clear
     }
 
     static public func rootView() -> UIView? {
@@ -163,38 +163,39 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     
     public func dispose() {
         hide()
+        webview = nil
     }
     
     public func show() {
-        WebviewManager.rootView()!.addSubview(webview)
+        WebviewManager.rootView()!.addSubview(webview!)
     }
     
     public func hide() {
-        webview.removeFromSuperview()        
+        webview!.removeFromSuperview()
     }
     
     public func load(url: String) {
-        webview.load(URLRequest(url: URL(string: url)!))
+        webview!.load(URLRequest(url: URL(string: url)!))
     }
     
     public func loadHTML(html: String) {
-        webview.loadHTMLString(html, baseURL: nil)
+        webview!.loadHTMLString(html, baseURL: nil)
     }
     
     public func back() {
-        webview.goBack()
+        webview!.goBack()
     }
     
     public func forward() {
-        webview.goForward()
+        webview!.goForward()
     }
     
     public func reload() {
-        webview.reload()
+        webview!.reload()
     }
     
     public func position(l: CGFloat, t: CGFloat, w: CGFloat, h: CGFloat) {
-        webview.frame = CGRect(x: l, y: t, width: w, height: h)
+        webview!.frame = CGRect(x: l, y: t, width: w, height: h)
     }
     
     public func setDenyList(patterns: Dictionary<String, String>) {
@@ -202,7 +203,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     }
     
     public func eval(exec_id: String, expression: String) {
-        webview.evaluateJavaScript(expression) { (result, error) in
+        webview!.evaluateJavaScript(expression) { (result, error) in
             self.plugin.sendEvent(id: self.id, type: "exec_result", data: [
                 "id": exec_id,
                 "result": result,
@@ -221,27 +222,27 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     
     public func webView(_ _: WKWebView, didFinish navigation: WKNavigation!) {
         plugin.sendEvent(id: id, type: "page_finished", data: [
-            "url": webview.url!.absoluteString,
-            "can_go_back": webview.canGoBack,
-            "can_go_forward": webview.canGoBack,
+            "url": webview!.url!.absoluteString,
+            "can_go_back": webview!.canGoBack,
+            "can_go_forward": webview!.canGoBack,
         ])
     }
     
     public func webView(_ _: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         plugin.sendEvent(id: id, type: "page_started", data: [
-            "url": webview.url!.absoluteString,
-            "can_go_back": webview.canGoBack,
-            "can_go_forward": webview.canGoBack,
+            "url": webview!.url!.absoluteString,
+            "can_go_back": webview!.canGoBack,
+            "can_go_forward": webview!.canGoBack,
         ])
-        _lastURL = webview.url!.absoluteString
+        _lastURL = webview!.url!.absoluteString
     }
     
     public func webView(_ _: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         plugin.sendEvent(id: id, type: "page_error", data: [
             "url": _lastURL,
             "description": error.localizedDescription,
-            "can_go_back": webview.canGoBack,
-            "can_go_forward": webview.canGoBack,
+            "can_go_back": webview!.canGoBack,
+            "can_go_forward": webview!.canGoBack,
         ])
     }
     
@@ -249,8 +250,8 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         plugin.sendEvent(id: id, type: "page_error", data: [
             "url": _lastURL,
             "description": error.localizedDescription,
-            "can_go_back": webview.canGoBack,
-            "can_go_forward": webview.canGoBack,
+            "can_go_back": webview!.canGoBack,
+            "can_go_forward": webview!.canGoBack,
         ])
     }
     
@@ -258,8 +259,8 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         
         plugin.sendEvent(id: id, type: "page_progress", data: [
             "url": navigationAction.request.url!.absoluteString,
-            "can_go_back": webview.canGoBack,
-            "can_go_forward": webview.canGoBack,
+            "can_go_back": webview!.canGoBack,
+            "can_go_forward": webview!.canGoBack,
         ])
         
         if denyPatterns != nil {
@@ -270,8 +271,8 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
                     plugin.sendEvent(id: id, type: "page_deny", data: [
                         "key": key,
                         "url": navigationAction.request.url!.absoluteString,
-                        "can_go_back": webview.canGoBack,
-                        "can_go_forward": webview.canGoBack,
+                        "can_go_back": webview!.canGoBack,
+                        "can_go_forward": webview!.canGoBack,
                     ])
                     decisionHandler(.cancel)
                     return
@@ -282,8 +283,8 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         if navigationAction.navigationType == WKNavigationType.linkActivated && navigationAction.targetFrame == nil {
             plugin.sendEvent(id: id, type: "page_new_window", data: [
                 "url": navigationAction.request.url!.absoluteString,
-                "can_go_back": webview.canGoBack,
-                "can_go_forward": webview.canGoBack,
+                "can_go_back": webview!.canGoBack,
+                "can_go_forward": webview!.canGoBack,
             ])
             decisionHandler(.cancel)
         } else {

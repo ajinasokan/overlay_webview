@@ -170,6 +170,9 @@ class WebViewController {
   /// Go forward to next page
   Future<void> forward() async => _webview.invokeMethod("forward", {"id": _id});
 
+  Future<bool> enableDebugging(bool value) async =>
+      _webview.invokeMethod("enableDebugging", {"id": _id, "value": value});
+
   /// Load [url] in the WebView. Returns [Future] that waits until page is finished
   /// loading or error happens
   Future<void> load(String url) async {

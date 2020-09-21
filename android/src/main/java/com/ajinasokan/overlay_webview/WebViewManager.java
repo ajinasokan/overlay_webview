@@ -75,9 +75,7 @@ public class WebViewManager {
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setAppCacheEnabled(true);
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        //     WebView.setWebContentsDebuggingEnabled(true);
-        // }
+        
         // webView.getSettings().setLoadWithOverviewMode(true);
         // webView.getSettings().setUseWideViewPort(true);
 
@@ -193,6 +191,8 @@ public class WebViewManager {
 
     void dispose() {
         hide();
+        removeFromActivity();
+        webView.destroy();
         webView = null;
     }
 
@@ -205,6 +205,10 @@ public class WebViewManager {
         PermissionHandler.getActivity().addContentView(webView, layoutParams);
     }
 
+    void removeFromActivity() {
+        ((ViewGroup) (webView.getParent())).removeView(webView);
+    }
+
     void permissionCallback() {
         downloadHandler.startDownload();
     }
@@ -215,6 +219,12 @@ public class WebViewManager {
 
     void loadHTML(String html) {
         webView.loadData(html, "text/html", "UTF-8");
+    }
+
+    void enableDebugging(boolean value) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(value);
+        }
     }
 
     void position(int l, int t, int w, int h) {
