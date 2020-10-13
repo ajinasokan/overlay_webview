@@ -16,6 +16,12 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final webView = WebViewController(id: "main");
+  bool isInf = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,6 +33,14 @@ class _MyAppState extends State<MyApp> {
         children: <Widget>[
           Wrap(
             children: <Widget>[
+              RaisedButton(
+                child: Text("Toggle width"),
+                onPressed: () async {
+                  setState(() {
+                    isInf = !isInf;
+                  });
+                },
+              ),
               RaisedButton(
                 child: Text("Active WebViews"),
                 onPressed: () async {
@@ -186,6 +200,7 @@ class _MyAppState extends State<MyApp> {
           ),
           Expanded(
             child: Container(
+              width: isInf ? double.infinity : null,
               decoration: BoxDecoration(
                 border: Border.all(width: 5, color: Colors.red),
               ),

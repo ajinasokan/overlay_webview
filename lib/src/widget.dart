@@ -13,9 +13,8 @@ class WebView extends StatefulWidget {
   /// for all the operations. Useful when parent widget need to take control.
   final WebViewController controller;
 
-  /// Set [managed] to false to disable the automatic show/hide/dispose
-  /// of WebView.
-  final bool managed;
+  /// Set [autoVisible] to false to disable automatically showing webview
+  final bool autoVisible;
 
   /// [url] to be loaded when showing WebView
   final String url;
@@ -60,8 +59,8 @@ class WebView extends StatefulWidget {
 
   WebView({
     this.controller,
-    this.managed = true,
     this.url,
+    this.autoVisible = true,
     this.onPageStart,
     this.onPageEnd,
     this.onPageProgress,
@@ -121,8 +120,10 @@ class _WebViewState extends State<WebView> {
   void dispose() {
     shown = false;
     subscription?.cancel();
-    if (widget.managed) ctrl.hide();
-    if (widget.managed) ctrl.dispose();
+    if (widget.controller == null) {
+      ctrl.hide();
+      ctrl.dispose();
+    }
     super.dispose();
   }
 
@@ -134,7 +135,7 @@ class _WebViewState extends State<WebView> {
     return _PaintBounds(
       onBoundsChange: (Rect p) {
         ctrl.setPosition(p);
-        if (widget.managed && !shown) {
+        if (widget.autoVisible && !shown) {
           ctrl.show();
           shown = true;
         }
