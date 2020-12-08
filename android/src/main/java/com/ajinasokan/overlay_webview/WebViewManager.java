@@ -79,9 +79,9 @@ public class WebViewManager {
         // webView.getSettings().setLoadWithOverviewMode(true);
         // webView.getSettings().setUseWideViewPort(true);
 
-        // webView.getSettings().setSupportZoom(true);
-        // webView.getSettings().setBuiltInZoomControls(true);
-        // webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setSupportZoom(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
 
         // webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         // webView.setScrollbarFadingEnabled(false);
