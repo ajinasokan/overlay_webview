@@ -90,7 +90,9 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
   }
 
   void permissionCallback(String webViewID) {
-    webviews.get(webViewID).permissionCallback();
+    if(webviews.get(webViewID) != null) {
+      webviews.get(webViewID).permissionCallback();
+    }
   }
 
   void sendEvent(String id, String type, Map<String, Object> data) {
