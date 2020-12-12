@@ -87,6 +87,8 @@ public class SwiftOverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHa
             }
             webviews.removeAll()
         }
+        else if(call.method == "enableDebugging") {
+        }
         else {
             result(FlutterMethodNotImplemented)
             return
