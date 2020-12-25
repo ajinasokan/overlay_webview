@@ -38,7 +38,7 @@ class _PaintBoundsRender extends RenderProxyBox {
   void paint(PaintingContext context, Offset offset) {
     super.paint(context, offset);
 
-    final newRect = offset & paintBounds.size;
+    final newRect = offset & constraints.biggest;
     if (lastRect != newRect) {
       onBoundsChange(newRect);
       lastRect = newRect;
