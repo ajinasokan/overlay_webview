@@ -133,10 +133,10 @@ class _WebViewState extends State<WebView> {
     // Whenever that happens update the position of WebView. And if
     // this is the first report then make WebView visible.
     return _PaintBounds(
-      onBoundsChange: (Rect p) {
-        ctrl.setPosition(p);
+      onBoundsChange: (Rect p) async {
+        await ctrl.setPosition(p);
         if (widget.autoVisible && !shown) {
-          ctrl.show();
+          await ctrl.show();
           shown = true;
         }
       },
