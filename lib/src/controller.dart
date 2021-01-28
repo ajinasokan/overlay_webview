@@ -186,7 +186,7 @@ class WebViewController {
   Future<void> loadHTML(String html) async {
     _load = Completer();
     _webview.invokeMethod("loadHTML", {
-      "html": Uri.encodeComponent(html),
+      "html": html,
       "id": _id,
     });
     return _load.future;

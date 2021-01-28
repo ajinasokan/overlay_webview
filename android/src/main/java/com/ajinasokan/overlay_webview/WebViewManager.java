@@ -218,7 +218,9 @@ public class WebViewManager {
     }
 
     void loadHTML(String html) {
-        webView.loadData(html, "text/html", "UTF-8");
+        // loadData requires url encoding, loadDataWithBaseURL doesnt
+        // Refer: https://developer.android.com/reference/android/webkit/WebView#loadDataWithBaseURL(java.lang.String,%20java.lang.String,%20java.lang.String,%20java.lang.String,%20java.lang.String)
+        webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
     }
 
     void enableDebugging(boolean value) {
