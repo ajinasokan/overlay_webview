@@ -10,6 +10,12 @@ class _FullPageState extends State<FullPage> {
   final webView = WebViewController();
 
   @override
+  void dispose() {
+    webView.hide();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {

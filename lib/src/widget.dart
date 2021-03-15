@@ -11,51 +11,51 @@ part 'paint_bounds.dart';
 class WebView extends StatefulWidget {
   /// Providing instance of [WebViewController] will make this widget use that
   /// for all the operations. Useful when parent widget need to take control.
-  final WebViewController controller;
+  final WebViewController? controller;
 
   /// Set [autoVisible] to false to disable automatically showing webview
   final bool autoVisible;
 
   /// [url] to be loaded when showing WebView
-  final String url;
+  final String? url;
 
   /// [onPageStart] is called when WebView starts loading a page
-  final void Function(PageStartEvent) onPageStart;
+  final void Function(PageStartEvent)? onPageStart;
 
   /// [onPageEnd] is called when WebView ends loading a page
-  final void Function(PageEndEvent) onPageEnd;
+  final void Function(PageEndEvent)? onPageEnd;
 
   /// [onPageProgress] is called when WebView reports a progress in the loading
-  final void Function(PageProgressEvent) onPageProgress;
+  final void Function(PageProgressEvent)? onPageProgress;
 
   /// [onPageError] is called when WebView fails to load the page
-  final void Function(PageErrorEvent) onPageError;
+  final void Function(PageErrorEvent)? onPageError;
 
   /// [onPageDeny] is called when WebView blocks a URL specified in the [denyList]
-  final void Function(PageDenyEvent) onPageDeny;
+  final void Function(PageDenyEvent)? onPageDeny;
 
   /// [onPageNewWindow] is called when WebView blocks opening a new window
-  final void Function(PageNewWindowEvent) onPageNewWindow;
+  final void Function(PageNewWindowEvent)? onPageNewWindow;
 
   /// [onPostMessage] is called when page loaded in WebView sends a postMessage
-  final void Function(PostMessageEvent) onPostMessage;
+  final void Function(PostMessageEvent)? onPostMessage;
 
   /// [onDownloadInit] is called when page in WebView initialises a download (only Android)
-  final void Function(DownloadInitEvent) onDownloadInit;
+  final void Function(DownloadInitEvent)? onDownloadInit;
 
   /// [onDownloadStarted] is called when page in WebView starts a download (only Android)
-  final void Function(DownloadStartedEvent) onDownloadStarted;
+  final void Function(DownloadStartedEvent)? onDownloadStarted;
 
   /// [onDownloadCancelled] is called when page in WebView cancels a download (only Android)
-  final void Function(DownloadCancelledEvent) onDownloadCancelled;
+  final void Function(DownloadCancelledEvent)? onDownloadCancelled;
 
   /// [background] widget is shown until WebView is visible
-  final Widget background;
+  final Widget? background;
 
   /// [denyList] is a map of a key(eg: block_facebook) and corresponding regular expression
   /// for matching URL (eg: ^facebook.com). If match happens WebView will block the navigation
   /// and will call [onPageDeny] with the details.
-  final Map<String, String> denyList;
+  final Map<String, String>? denyList;
 
   WebView({
     this.controller,
@@ -80,11 +80,11 @@ class WebView extends StatefulWidget {
 }
 
 class _WebViewState extends State<WebView> {
-  WebViewController ctrl;
-  Orientation orientation;
-  Size size;
+  late WebViewController ctrl;
+  Orientation? orientation;
+  Size? size;
   bool shown = false;
-  StreamSubscription subscription;
+  StreamSubscription? subscription;
 
   @override
   void initState() {
@@ -140,7 +140,7 @@ class _WebViewState extends State<WebView> {
           shown = true;
         }
       },
-      child: widget.background ?? SizedBox(height: 0, width: 0),
+      child: widget.background ?? SizedBox.expand(),
     );
   }
 }

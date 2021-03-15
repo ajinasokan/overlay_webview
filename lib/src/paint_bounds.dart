@@ -6,32 +6,32 @@ class _PaintBounds extends SingleChildRenderObjectWidget {
   final ValueChanged<Rect> onBoundsChange;
 
   _PaintBounds({
-    Widget child,
-    this.onBoundsChange,
+    required Widget child,
+    required this.onBoundsChange,
   }) : super(child: child);
 
   @override
   _PaintBoundsRender createRenderObject(BuildContext context) =>
-      _PaintBoundsRender(onBoundsChange);
+      _PaintBoundsRender(onBoundsChange: onBoundsChange);
 }
 
 class _PaintBoundsRender extends RenderProxyBox {
   final ValueChanged<Rect> onBoundsChange;
 
-  _PaintBoundsRender(this.onBoundsChange);
+  _PaintBoundsRender({required this.onBoundsChange});
 
-  Rect lastRect;
+  Rect lastRect = Rect.zero;
 
   @override
   void performLayout() {
     super.performLayout();
-    if (lastRect != null) onBoundsChange(lastRect);
+    onBoundsChange(lastRect);
   }
 
   @override
   void performResize() {
     super.performResize();
-    if (lastRect != null) onBoundsChange(lastRect);
+    onBoundsChange(lastRect);
   }
 
   @override

@@ -4,9 +4,9 @@ abstract class WebViewEvent {}
 
 /// Event fired when WebView starts loading a page
 class PageStartEvent extends WebViewEvent {
-  final String url;
-  final bool canGoBack;
-  final bool canGoForward;
+  final String? url;
+  final bool? canGoBack;
+  final bool? canGoForward;
 
   PageStartEvent._({
     this.url,
@@ -17,9 +17,9 @@ class PageStartEvent extends WebViewEvent {
 
 /// Event fired when WebView ends loading a page
 class PageEndEvent extends WebViewEvent {
-  final String url;
-  final bool canGoBack;
-  final bool canGoForward;
+  final String? url;
+  final bool? canGoBack;
+  final bool? canGoForward;
 
   PageEndEvent._({
     this.url,
@@ -30,11 +30,11 @@ class PageEndEvent extends WebViewEvent {
 
 /// Event fired when WebView fails to load the page
 class PageErrorEvent extends WebViewEvent {
-  final String url;
-  final String errorCode;
-  final String errorDescription;
-  final bool canGoBack;
-  final bool canGoForward;
+  final String? url;
+  final String? errorCode;
+  final String? errorDescription;
+  final bool? canGoBack;
+  final bool? canGoForward;
 
   PageErrorEvent._({
     this.url,
@@ -47,9 +47,9 @@ class PageErrorEvent extends WebViewEvent {
 
 /// Event fired when WebView reports a progress in the loading
 class PageProgressEvent extends WebViewEvent {
-  final String url;
-  final bool canGoBack;
-  final bool canGoForward;
+  final String? url;
+  final bool? canGoBack;
+  final bool? canGoForward;
 
   PageProgressEvent._({
     this.url,
@@ -60,10 +60,10 @@ class PageProgressEvent extends WebViewEvent {
 
 /// Event fired when WebView blocks a URL specified in the [WebViewController.setDenyList]
 class PageDenyEvent extends WebViewEvent {
-  final String key;
-  final String url;
-  final bool canGoBack;
-  final bool canGoForward;
+  final String? key;
+  final String? url;
+  final bool? canGoBack;
+  final bool? canGoForward;
 
   PageDenyEvent._({
     this.key,
@@ -75,9 +75,9 @@ class PageDenyEvent extends WebViewEvent {
 
 /// Event fired when WebView blocks opening a new window
 class PageNewWindowEvent extends WebViewEvent {
-  final String url;
-  final bool canGoBack;
-  final bool canGoForward;
+  final String? url;
+  final bool? canGoBack;
+  final bool? canGoForward;
 
   PageNewWindowEvent._({
     this.url,
@@ -88,24 +88,24 @@ class PageNewWindowEvent extends WebViewEvent {
 
 /// Event fired when page loaded in WebView sends a postMessage
 class PostMessageEvent extends WebViewEvent {
-  final String message;
+  final String? message;
   PostMessageEvent._({this.message});
 }
 
 /// Event fired when page in WebView initialises a download (only Android)
 class DownloadInitEvent extends WebViewEvent {
-  final String url;
+  final String? url;
   DownloadInitEvent._({this.url});
 }
 
 /// Event fired when page in WebView starts a download (only Android)
 class DownloadStartedEvent extends WebViewEvent {
-  final String url;
+  final String? url;
   DownloadStartedEvent._({this.url});
 }
 
 /// Event fired when page in WebView cancels a download (only Android)
 class DownloadCancelledEvent extends WebViewEvent {
-  final String url;
+  final String? url;
   DownloadCancelledEvent._({this.url});
 }

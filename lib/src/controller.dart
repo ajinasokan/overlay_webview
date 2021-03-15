@@ -5,9 +5,10 @@ import 'dart:convert';
 
 part 'events.dart';
 
-MethodChannel _webview;
-EventChannel _webviewEvents;
-Stream _webviewEventsStream;
+MethodChannel _webview = MethodChannel('overlay_webview');
+EventChannel _webviewEvents = EventChannel('overlay_webview_events');
+late Stream _webviewEventsStream = _webviewEvents.receiveBroadcastStream();
+
 int _webviewID = 0;
 
 /// [WebViewController] handles all the operations on WebView. This is the
@@ -16,9 +17,9 @@ int _webviewID = 0;
 class WebViewController {
   var _execID = 0;
   Map<String, Completer<dynamic>> _execs = {};
-  Completer<void> _load;
-  StreamSubscription _subscription;
-  String _id;
+  Completer<void>? _load;
+  StreamSubscription? _subscription;
+  String? _id;
 
   final _events = StreamController<WebViewEvent>.broadcast();
 
@@ -27,7 +28,6 @@ class WebViewController {
 
   /// Returns list of active WebView instance IDs
   static Future<List<String>> activeWebViews() async {
-    _initPlugin();
     final webViewIDs = await _webview.invokeMethod("activeWebViews", {});
     return webViewIDs.cast<String>();
   }
@@ -35,29 +35,16 @@ class WebViewController {
   /// Cleanup all WebViews. Can be used to clear memory when using background
   /// instances of WebView.
   static Future<void> disposeAll() async {
-    _initPlugin();
     await _webview.invokeMethod("disposeAll", {});
   }
 
   /// Create instance with a unique ID
-  WebViewController({String id}) {
+  WebViewController({String? id}) {
     if (id == null) {
       _webviewID++;
       _id = "webview_$_webviewID";
     } else {
       _id = id;
-    }
-    _initPlugin();
-  }
-
-  /// Initialise method and event channels
-  static void _initPlugin() {
-    if (_webview == null) {
-      _webview = MethodChannel('overlay_webview');
-    }
-    if (_webviewEvents == null) {
-      _webviewEvents = EventChannel('overlay_webview_events');
-      _webviewEventsStream = _webviewEvents.receiveBroadcastStream();
     }
   }
 
@@ -79,11 +66,11 @@ class WebViewController {
       final id = data["data"]["id"] as String;
       final result = data["data"]["result"];
       if (result is String)
-        _execs[id].complete(json.decode(result));
+        _execs[id]!.complete(json.decode(result));
       else if (result is Map)
-        _execs[id].complete(result);
+        _execs[id]!.complete(result);
       else
-        _execs[id].complete(null);
+        _execs[id]!.complete(null);
       _execs.remove(id);
     } else if (data["type"] == "page_start") {
       _events.add(PageStartEvent._(
@@ -149,7 +136,7 @@ class WebViewController {
   Future<void> dispose() async {
     if (_subscription == null) return;
     _webview.invokeMethod("dispose", {"id": _id});
-    _subscription.cancel();
+    _subscription!.cancel();
     _events.close();
     _subscription = null;
     _hasDisposed = true;
@@ -170,15 +157,15 @@ class WebViewController {
   /// Go forward to next page
   Future<void> forward() async => _webview.invokeMethod("forward", {"id": _id});
 
-  Future<bool> enableDebugging(bool value) async =>
+  Future<bool?> enableDebugging(bool value) async =>
       _webview.invokeMethod("enableDebugging", {"id": _id, "value": value});
 
   /// Load [url] in the WebView. Returns [Future] that waits until page is finished
   /// loading or error happens
-  Future<void> load(String url) async {
+  Future<void> load(String? url) async {
     _load = Completer();
     _webview.invokeMethod("load", {"url": url, "id": _id});
-    return _load.future;
+    return _load!.future;
   }
 
   /// Load [html] to the WebView. Returns [Future] that waits until page is finished
@@ -189,7 +176,7 @@ class WebViewController {
       "html": html,
       "id": _id,
     });
-    return _load.future;
+    return _load!.future;
   }
 
   /// Executes given JS [expression] and returns back the [Future] containing the
@@ -202,7 +189,7 @@ class WebViewController {
       "exec_id": execID,
       "expression": expression,
     });
-    return await _execs[execID].future;
+    return await _execs[execID]!.future;
   }
 
   /// Sends the given [message] to the WebView using postMessage API
@@ -213,7 +200,7 @@ class WebViewController {
   /// [setDenyList] sets a map of a key(eg: block_facebook) and corresponding regular expression
   /// for matching URL (eg: ^facebook.com). If match happens WebView will block the navigation
   /// and will send back [PageDenyEvent] event with the details.
-  Future<void> setDenyList(Map<String, String> items) async =>
+  Future<void> setDenyList(Map<String, String>? items) async =>
       _webview.invokeMethod("denyList", {"id": _id, "items": items});
 
   /// Sets the position of WebView to [p]
