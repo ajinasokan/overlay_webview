@@ -162,7 +162,7 @@ class WebViewController {
 
   /// Load [url] in the WebView. Returns [Future] that waits until page is finished
   /// loading or error happens
-  Future<void> load(String? url) async {
+  Future<void> load(String url) async {
     _load = Completer();
     _webview.invokeMethod("load", {"url": url, "id": _id});
     return _load!.future;
@@ -200,7 +200,7 @@ class WebViewController {
   /// [setDenyList] sets a map of a key(eg: block_facebook) and corresponding regular expression
   /// for matching URL (eg: ^facebook.com). If match happens WebView will block the navigation
   /// and will send back [PageDenyEvent] event with the details.
-  Future<void> setDenyList(Map<String, String>? items) async =>
+  Future<void> setDenyList(Map<String, String> items) async =>
       _webview.invokeMethod("denyList", {"id": _id, "items": items});
 
   /// Sets the position of WebView to [p]
@@ -212,5 +212,17 @@ class WebViewController {
       "w": p.width.toInt(),
       "h": p.height.toInt(),
     });
+  }
+
+  /// Load [html] to the WebView on client side error. HTML can have template
+  /// strings: {{errorURL}} {{errorDescription}} {{errorCode}} which will get
+  /// replaced with appropriate values
+  Future<void> setErrorPage(String html) async {
+    _load = Completer();
+    _webview.invokeMethod("errorPage", {
+      "html": html,
+      "id": _id,
+    });
+    return _load!.future;
   }
 }

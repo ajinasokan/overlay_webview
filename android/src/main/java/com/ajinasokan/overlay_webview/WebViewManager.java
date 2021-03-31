@@ -33,6 +33,7 @@ public class WebViewManager {
     String webViewID;
     public HashMap<String, Pattern> denyPatterns;
     private OverlayWebviewPlugin plugin;
+    public String errorPage;
 
     WebViewManager(OverlayWebviewPlugin plugin, String webViewID) {
         this.plugin = plugin;
@@ -118,7 +119,13 @@ public class WebViewManager {
                     put("can_go_back", view.canGoBack());
                     put("can_go_forward", view.canGoForward());
                 }});
-                loadHTML("");
+                if(errorPage != null) {
+                    String html = errorPage
+                            .replaceAll("\\{\\{errorURL\\}\\}", failingUrl)
+                            .replaceAll("\\{\\{errorCode\\}\\}", errorCode+"")
+                            .replaceAll("\\{\\{errorDescription\\}\\}", description);
+                    loadHTML(html);
+                }
             }
 
             @TargetApi(android.os.Build.VERSION_CODES.M)
@@ -137,7 +144,13 @@ public class WebViewManager {
                         put("can_go_back", view.canGoBack());
                         put("can_go_forward", view.canGoForward());
                     }});
-                    loadHTML("");
+                    if(errorPage != null) {
+                        String html = errorPage
+                                .replaceAll("\\{\\{errorURL\\}\\}", currentUrl)
+                                .replaceAll("\\{\\{errorCode\\}\\}", error.getErrorCode()+"")
+                                .replaceAll("\\{\\{errorDescription\\}\\}", error.getDescription().toString());
+                        loadHTML(html);
+                    }
                 }
             }
 

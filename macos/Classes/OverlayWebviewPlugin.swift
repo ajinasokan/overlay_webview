@@ -61,6 +61,10 @@ public class OverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHandler
             let html = (call.arguments as! NSDictionary)["html"] as! String
             webviews[webviewID]?.loadHTML(html: html)
         }
+        else if(call.method == "errorPage") {
+            let html = (call.arguments as! NSDictionary)["html"] as! String
+            webviews[webviewID]?.errorPage = html
+        }
         else if(call.method == "position") {
             let rect = call.arguments as! NSDictionary
             let l = rect["l"] as! CGFloat
@@ -123,6 +127,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     let plugin: OverlayWebviewPlugin
     let id : String
     let webview : WKWebView
+    var errorPage: String?
     
     var denyPatterns: Dictionary<String, String>?
     
@@ -163,8 +168,11 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     }
     
     public func show() {
-        WebviewManager.rootView()!.addSubview(webview)
-        webview.isHidden = false
+        let view = WebviewManager.rootView()
+        if view != nil {
+            view!.addSubview(webview)
+            webview.isHidden = false
+        }
     }
     
     public func hide() {
@@ -237,19 +245,37 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     public func webView(_ _: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!, withError error: Error) {
         plugin.sendEvent(id: id, type: "page_error", data: [
             "url": _lastURL,
+            "code": String((error as NSError).code),
             "description": error.localizedDescription,
             "can_go_back": webview.canGoBack,
             "can_go_forward": webview.canGoBack,
         ])
+        if(errorPage != nil) {
+            var html = errorPage!
+            html = html.replacingOccurrences(of: "{errorURL}", with: _lastURL)
+            html = html.replacingOccurrences(of: "{errorCode}", with: String((error as NSError).code))
+            html = html.replacingOccurrences(of: "{errorDescription}", with: error.localizedDescription)
+            
+            loadHTML(html: html)
+        }
     }
     
     public func webView(_ _: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         plugin.sendEvent(id: id, type: "page_error", data: [
             "url": _lastURL,
+            "code": String((error as NSError).code),
             "description": error.localizedDescription,
             "can_go_back": webview.canGoBack,
             "can_go_forward": webview.canGoBack,
         ])
+        if(errorPage != nil) {
+            var html = errorPage!
+            html = html.replacingOccurrences(of: "{errorURL}", with: _lastURL)
+            html = html.replacingOccurrences(of: "{errorCode}", with: String((error as NSError).code))
+            html = html.replacingOccurrences(of: "{errorDescription}", with: error.localizedDescription)
+            
+            loadHTML(html: html)
+        }
     }
     
     public func webView(_ _: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Swift.Void) {

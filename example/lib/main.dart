@@ -196,6 +196,20 @@ class _MyAppState extends State<MyApp> {
                   webView.forward();
                 },
               ),
+              RaisedButton(
+                child: Text("Error load mainFrame"),
+                onPressed: () async {
+                  webView.load("http://google.com");
+                },
+              ),
+              RaisedButton(
+                child: Text("Error load iframe"),
+                onPressed: () async {
+                  webView.loadHTML("""
+                  <iframe src='http://google.com'>
+                  """);
+                },
+              ),
             ],
           ),
           Expanded(
@@ -207,6 +221,10 @@ class _MyAppState extends State<MyApp> {
               child: WebView(
                 url: "https://google.com",
                 controller: webView,
+                errorPage: "custom error page<br>"
+                    "errorCode: {{errorCode}}<br>"
+                    "errorDescription: {{errorDescription}}<br>"
+                    "errorURL: {{errorURL}}<br>",
               ),
             ),
           ),
