@@ -226,4 +226,16 @@ class WebViewController {
       "h": p.height.toInt(),
     });
   }
+
+  /// Load [html] to the WebView on client side error. HTML can have template
+  /// strings: {{errorURL}} {{errorDescription}} {{errorCode}} which will get
+  /// replaced with appropriate values
+  Future<void> setErrorPage(String html) async {
+    _load = Completer();
+    _webview.invokeMethod("errorPage", {
+      "html": html,
+      "id": _id,
+    });
+    return _load.future;
+  }
 }

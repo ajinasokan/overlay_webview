@@ -57,6 +57,11 @@ class WebView extends StatefulWidget {
   /// and will call [onPageDeny] with the details.
   final Map<String, String> denyList;
 
+  /// HTML contents of [errorPage] will be rendered in webview in case a PageError
+  /// occurs. HTML can have template strings: {{errorURL}} {{errorDescription}} {
+  /// {errorCode}} which will get replaced with appropriate values.
+  final String errorPage;
+
   WebView({
     this.controller,
     this.url,
@@ -73,6 +78,7 @@ class WebView extends StatefulWidget {
     this.onDownloadCancelled,
     this.background,
     this.denyList,
+    this.errorPage,
   });
 
   @override
@@ -99,6 +105,7 @@ class _WebViewState extends State<WebView> {
     subscription = ctrl.eventStream.listen(onEvent);
     if (widget.url != null) ctrl.load(widget.url);
     if (widget.denyList != null) ctrl.setDenyList(widget.denyList);
+    if (widget.errorPage != null) ctrl.setErrorPage(widget.errorPage);
   }
 
   /// Handler to dispatch callbacks corresponding to the event
