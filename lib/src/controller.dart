@@ -231,11 +231,9 @@ class WebViewController {
   /// strings: {{errorURL}} {{errorDescription}} {{errorCode}} which will get
   /// replaced with appropriate values
   Future<void> setErrorPage(String html) async {
-    _load = Completer();
-    _webview.invokeMethod("errorPage", {
+    return _webview.invokeMethod("errorPage", {
       "html": html,
       "id": _id,
     });
-    return _load.future;
   }
 }
