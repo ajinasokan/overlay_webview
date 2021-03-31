@@ -254,9 +254,9 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         ])
         if(errorPage != nil) {
             var html = errorPage!
-            html = html.replacingOccurrences(of: "{errorURL}", with: _lastURL)
-            html = html.replacingOccurrences(of: "{errorCode}", with: String((error as NSError).code))
-            html = html.replacingOccurrences(of: "{errorDescription}", with: error.localizedDescription)
+            html = html.replacingOccurrences(of: "{{errorURL}}", with: _lastURL)
+            html = html.replacingOccurrences(of: "{{errorCode}}", with: String((error as NSError).code))
+            html = html.replacingOccurrences(of: "{{errorDescription}}", with: error.localizedDescription)
             
             loadHTML(html: html)
         }
@@ -272,9 +272,9 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         ])
         if(errorPage != nil) {
             var html = errorPage!
-            html = html.replacingOccurrences(of: "{errorURL}", with: _lastURL)
-            html = html.replacingOccurrences(of: "{errorCode}", with: String((error as NSError).code))
-            html = html.replacingOccurrences(of: "{errorDescription}", with: error.localizedDescription)
+            html = html.replacingOccurrences(of: "{{errorURL}}", with: _lastURL)
+            html = html.replacingOccurrences(of: "{{errorCode}}", with: String((error as NSError).code))
+            html = html.replacingOccurrences(of: "{{errorDescription}}", with: error.localizedDescription)
             
             loadHTML(html: html)
         }
