@@ -317,4 +317,56 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         }
     }
     
+    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo,
+                 completionHandler: @escaping () -> Void) {
+
+        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+            completionHandler()
+        }))
+
+        UIApplication.shared.delegate?.window??.rootViewController?.present(alertController, animated: true, completion: nil)
+    }
+
+
+    public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo,
+                 completionHandler: @escaping (Bool) -> Void) {
+
+        let alertController = UIAlertController(title: nil, message: message, preferredStyle: .actionSheet)
+
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+            completionHandler(true)
+        }))
+
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+            completionHandler(false)
+        }))
+
+        UIApplication.shared.delegate?.window??.rootViewController?.present(alertController, animated: true, completion: nil)
+    }
+
+
+    public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo,
+                 completionHandler: @escaping (String?) -> Void) {
+
+        let alertController = UIAlertController(title: nil, message: prompt, preferredStyle: .alert)
+
+        alertController.addTextField { (textField) in
+            textField.text = defaultText
+        }
+
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: { (action) in
+            if let text = alertController.textFields?.first?.text {
+                completionHandler(text)
+            } else {
+                completionHandler(defaultText)
+            }
+        }))
+
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { (action) in
+            completionHandler(nil)
+        }))
+
+        UIApplication.shared.delegate?.window??.rootViewController?.present(alertController, animated: true, completion: nil)
+    }
 }
