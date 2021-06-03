@@ -33,7 +33,7 @@ class _MyAppState extends State<MyApp> {
         children: <Widget>[
           Wrap(
             children: <Widget>[
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Toggle width"),
                 onPressed: () async {
                   setState(() {
@@ -41,37 +41,37 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Active WebViews"),
                 onPressed: () async {
                   print(await WebViewController.activeWebViews());
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Dispose All"),
                 onPressed: () async {
                   await WebViewController.disposeAll();
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Init"),
                 onPressed: () {
                   webView.init();
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Google"),
                 onPressed: () {
                   webView.load("https://google.com");
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("DO"),
                 onPressed: () {
                   webView.load("http://speedtest-blr1.digitalocean.com");
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Downloads"),
                 onPressed: () {
                   webView.loadHTML("""
@@ -105,7 +105,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("onMessage"),
                 onPressed: () {
                   webView.loadHTML("""
@@ -124,7 +124,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Post Message"),
                 onPressed: () async {
                   await webView.loadHTML("""
@@ -142,26 +142,26 @@ class _MyAppState extends State<MyApp> {
                   await webView.postMessage("hello from flutter");
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Show"),
                 onPressed: () {
                   webView.show();
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Hide"),
                 onPressed: () {
                   webView.hide();
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Exec"),
                 onPressed: () async {
                   print(await webView
                       .exec("JSON.parse(JSON.stringify(window.location))"));
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Deny Google"),
                 onPressed: () {
                   webView.setDenyList({
@@ -169,44 +169,57 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Fullpage"),
                 onPressed: () async {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => FullPage()));
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Window creation"),
                 onPressed: () async {
                   await webView.loadHTML("""
                     <a href="https://google.com" target="_blank">Google in new window</a>
+                    <a href="https://google.com" target="_blank">
+                      <img src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/logo_chat_default_1x.png" />
+                    </a>
                   """);
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Back"),
                 onPressed: () async {
                   webView.back();
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Forward"),
                 onPressed: () async {
                   webView.forward();
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Error load mainFrame"),
                 onPressed: () async {
                   webView.load("http://google.com");
                 },
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Error load iframe"),
                 onPressed: () async {
                   webView.loadHTML("""
                   <iframe src='http://google.com'>
+                  """);
+                },
+              ),
+              ElevatedButton(
+                child: Text("Dialogs"),
+                onPressed: () async {
+                  webView.loadHTML("""
+                  <button onclick="alert('alert');">Alert</button>
+                  <button onclick="confirm('confirm');">Confirm</button>
+                  <button onclick="prompt('prompt','defaultText');">Prompt</button>
                   """);
                 },
               ),
@@ -221,6 +234,9 @@ class _MyAppState extends State<MyApp> {
               child: WebView(
                 url: "https://google.com",
                 controller: webView,
+                onPageNewWindow: (e) {
+                  print(e.url);
+                },
                 errorPage: "custom error page<br>"
                     "errorCode: {{errorCode}}<br>"
                     "errorDescription: {{errorDescription}}<br>"

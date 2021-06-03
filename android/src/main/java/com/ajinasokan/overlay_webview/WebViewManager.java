@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -26,6 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static android.webkit.WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE;
 
 public class WebViewManager {
     WebView webView;
@@ -190,8 +193,17 @@ public class WebViewManager {
             @Override
             public boolean onCreateWindow(final WebView view, boolean dialog, boolean userGesture, Message resultMsg)
             {
+                final String url;
+                Log.d("a type", view.getHitTestResult().getType()+"");
+                if(view.getHitTestResult().getType() == SRC_IMAGE_ANCHOR_TYPE) {
+                    Message href = view.getHandler().obtainMessage();
+                    view.requestFocusNodeHref(href);
+                    url = href.getData().getString("url");
+                } else {
+                    url = view.getHitTestResult().getExtra();
+                }
                 plugin.sendEvent(webViewID,"page_new_window", new HashMap<String, Object>(){ {
-                    put("url", view.getHitTestResult().getExtra());
+                    put("url", url);
                     put("can_go_back", view.canGoBack());
                     put("can_go_forward", view.canGoForward());
                 }});
