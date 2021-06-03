@@ -315,4 +315,68 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         }
     }
     
+    public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo,
+                     completionHandler: @escaping () -> Void) {
+
+            // Set the message as the NSAlert text
+            let alert = NSAlert()
+            alert.messageText = message
+//            alert.informativeText = message
+            alert.addButton(withTitle: "Ok")
+
+            // Display the NSAlert
+            alert.runModal()
+
+            // Call completionHandler
+            completionHandler()
+        }
+
+
+        public func webView(_ webView: WKWebView, runJavaScriptConfirmPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo,
+                     completionHandler: @escaping (Bool) -> Void) {
+            // Set the message as the NSAlert text
+            let alert = NSAlert()
+            alert.messageText = message
+
+            // Add a confirmation button “OK”
+            // and cancel button “Cancel”
+            alert.addButton(withTitle: "OK")
+            alert.addButton(withTitle: "Cancel")
+
+            // Display the NSAlert
+            let action = alert.runModal()
+
+            // Call completionHandler with true only
+            // if the user selected OK (the first button)
+            completionHandler(action == .alertFirstButtonReturn)
+        }
+
+
+        public func webView(_ webView: WKWebView, runJavaScriptTextInputPanelWithPrompt prompt: String, defaultText: String?, initiatedByFrame frame: WKFrameInfo,
+                     completionHandler: @escaping (String?) -> Void) {
+            
+            // Set the prompt as the NSAlert text
+            let alert = NSAlert()
+            alert.messageText = prompt
+            alert.addButton(withTitle: "Submit")
+
+            // Add an input NSTextField for the prompt
+            let inputFrame = NSRect(
+                x: 0,
+                y: 0,
+                width: 300,
+                height: 24
+            )
+
+            let textField = NSTextField(frame: inputFrame)
+            textField.placeholderString = (defaultText)
+            alert.accessoryView = textField
+
+            // Display the NSAlert
+            alert.runModal()
+
+            // Call completionHandler with
+            // the user input from textField
+            completionHandler(textField.stringValue)
+        }
 }
