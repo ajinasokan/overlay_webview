@@ -86,11 +86,13 @@ class WebView extends StatefulWidget {
 }
 
 class _WebViewState extends State<WebView> {
-  late WebViewController ctrl;
+  WebViewController? ctrl;
   Orientation? orientation;
   Size? size;
   bool shown = false;
+  Rect? position;
   StreamSubscription? subscription;
+  bool disposeAfterInit = false;
 
   @override
   void initState() {
@@ -100,12 +102,22 @@ class _WebViewState extends State<WebView> {
 
   /// Initialise WebViewController and set properties
   void initWebView() async {
-    ctrl = widget.controller ?? WebViewController();
-    await ctrl.init();
-    subscription = ctrl.eventStream.listen(onEvent);
-    if (widget.url != null) ctrl.load(widget.url!);
-    if (widget.denyList != null) ctrl.setDenyList(widget.denyList!);
-    if (widget.errorPage != null) ctrl.setErrorPage(widget.errorPage!);
+    WebViewController newCtrl = widget.controller ?? WebViewController();
+    await newCtrl.init();
+    subscription = newCtrl.eventStream.listen(onEvent);
+    if (widget.url != null) newCtrl.load(widget.url!);
+    if (widget.denyList != null) newCtrl.setDenyList(widget.denyList!);
+    if (widget.errorPage != null) newCtrl.setErrorPage(widget.errorPage!);
+    // widget got disposed while initialising
+    // so cleanup resources
+    if (disposeAfterInit) {
+      newCtrl.hide();
+      newCtrl.dispose();
+      return;
+    }
+    if (shown) await newCtrl.show();
+    if (position != null) await newCtrl.setPosition(position!);
+    ctrl = newCtrl;
   }
 
   /// Handler to dispatch callbacks corresponding to the event
@@ -128,8 +140,14 @@ class _WebViewState extends State<WebView> {
     shown = false;
     subscription?.cancel();
     if (widget.controller == null) {
-      ctrl.hide();
-      ctrl.dispose();
+      // if ctrl is null that means it is still being initialised
+      // defer dispose to end of init function.
+      if (ctrl == null) {
+        disposeAfterInit = true;
+      } else {
+        ctrl?.hide();
+        ctrl?.dispose();
+      }
     }
     super.dispose();
   }
@@ -141,9 +159,11 @@ class _WebViewState extends State<WebView> {
     // this is the first report then make WebView visible.
     return _PaintBounds(
       onBoundsChange: (Rect p) async {
-        await ctrl.setPosition(p);
-        if (widget.autoVisible && !shown) {
-          await ctrl.show();
+        position = p;
+        await ctrl?.setPosition(p);
+
+        if (widget.autoVisible && ctrl != null && !shown) {
+          await ctrl?.show();
           shown = true;
         }
       },

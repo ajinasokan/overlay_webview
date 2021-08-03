@@ -70,6 +70,8 @@ public class WebViewManager {
 
         webView = new WebView(PermissionHandler.getActivity());
 
+        webView.setVisibility(View.GONE);
+
         downloadHandler = new DownloadHandler(plugin, webViewID);
         webView.addJavascriptInterface(new WebViewBridge(), "WebViewBridge");
         webView.setDownloadListener(downloadHandler);
