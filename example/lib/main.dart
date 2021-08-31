@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:overlay_webview/overlay_webview.dart';
 import 'fullpage.dart';
 
-void main() => runApp(
-      MaterialApp(
-        home: MyApp(),
-        navigatorObservers: [],
-      ),
-    );
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await WebViewController.disposeAll();
+  runApp(
+    MaterialApp(
+      home: MyApp(),
+      navigatorObservers: [],
+    ),
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -16,6 +20,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final webView = WebViewController(id: "main");
+  bool isInit = false;
   bool isInf = false;
 
   @override
@@ -55,8 +60,10 @@ class _MyAppState extends State<MyApp> {
               ),
               ElevatedButton(
                 child: Text("Init"),
-                onPressed: () {
-                  webView.init();
+                onPressed: () async {
+                  await webView.init();
+                  isInit = true;
+                  setState(() {});
                 },
               ),
               ElevatedButton(
@@ -149,6 +156,12 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               ElevatedButton(
+                child: Text("Set Pos"),
+                onPressed: () {
+                  webView.setPosition(Rect.fromLTWH(0, 400, 400, 300));
+                },
+              ),
+              ElevatedButton(
                 child: Text("Hide"),
                 onPressed: () {
                   webView.hide();
@@ -225,6 +238,14 @@ class _MyAppState extends State<MyApp> {
               ),
             ],
           ),
+          // Expanded(
+          //   child: isInit
+          //       ? WebViewFrame(
+          //           child: SizedBox.expand(),
+          //           controller: webView,
+          //         )
+          //       : SizedBox.expand(),
+          // )
           Expanded(
             child: Container(
               width: isInf ? double.infinity : null,

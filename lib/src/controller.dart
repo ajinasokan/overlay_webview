@@ -51,10 +51,11 @@ class WebViewController {
 
   /// Initialise native WebView instance and subscribe to its events
   Future<void> init() async {
-    if (_subscription != null) return;
-    _subscription = _webviewEventsStream
-        .where((data) => data["id"] == _id)
-        .listen(_onEvent);
+    if (_subscription == null) {
+      _subscription = _webviewEventsStream
+          .where((data) => data["id"] == _id)
+          .listen(_onEvent);
+    }
     await _webview.invokeMethod("init", {"id": _id});
   }
 
