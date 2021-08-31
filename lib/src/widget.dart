@@ -105,7 +105,9 @@ class _WebViewState extends State<WebView> {
   /// Initialise WebViewController and set properties
   void initWebView() async {
     WebViewController newCtrl = widget.controller ?? WebViewController();
-    await newCtrl.init();
+    if (!newCtrl.hasInitialised) {
+      await newCtrl.init();
+    }
     subscription = newCtrl.eventStream.listen(onEvent);
     if (widget.enableDebugging)
       await newCtrl.enableDebugging(widget.enableDebugging);
