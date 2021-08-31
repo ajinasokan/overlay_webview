@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'controller.dart';
 
-part 'paint_bounds.dart';
+part 'frame.dart';
 
 /// [WebView] scaffolds initialisation, showing, hiding and disposing
 /// of native WebView implementation. Also provides convenient callbacks
@@ -15,6 +15,9 @@ class WebView extends StatefulWidget {
 
   /// Set [autoVisible] to false to disable automatically showing webview
   final bool autoVisible;
+
+  /// Set [enableDebugging] to true to enable webview debugging
+  final bool enableDebugging;
 
   /// [url] to be loaded when showing WebView
   final String? url;
@@ -66,6 +69,7 @@ class WebView extends StatefulWidget {
     this.controller,
     this.url,
     this.autoVisible = true,
+    this.enableDebugging = false,
     this.onPageStart,
     this.onPageEnd,
     this.onPageProgress,
@@ -89,15 +93,13 @@ class _WebViewState extends State<WebView> {
   WebViewController? ctrl;
   Orientation? orientation;
   Size? size;
-  bool shown = false;
-  Rect? position;
   StreamSubscription? subscription;
   bool disposeAfterInit = false;
 
   @override
   void initState() {
-    initWebView();
     super.initState();
+    initWebView();
   }
 
   /// Initialise WebViewController and set properties
@@ -105,19 +107,21 @@ class _WebViewState extends State<WebView> {
     WebViewController newCtrl = widget.controller ?? WebViewController();
     await newCtrl.init();
     subscription = newCtrl.eventStream.listen(onEvent);
+    if (widget.enableDebugging)
+      await newCtrl.enableDebugging(widget.enableDebugging);
+    if (widget.errorPage != null) await newCtrl.setErrorPage(widget.errorPage!);
+    if (widget.denyList != null) await newCtrl.setDenyList(widget.denyList!);
+    if (widget.autoVisible) await newCtrl.show();
     if (widget.url != null) newCtrl.load(widget.url!);
-    if (widget.denyList != null) newCtrl.setDenyList(widget.denyList!);
-    if (widget.errorPage != null) newCtrl.setErrorPage(widget.errorPage!);
     // widget got disposed while initialising
     // so cleanup resources
     if (disposeAfterInit) {
-      newCtrl.hide();
-      newCtrl.dispose();
+      await newCtrl.hide();
+      await newCtrl.dispose();
       return;
     }
-    if (shown) await newCtrl.show();
-    if (position != null) await newCtrl.setPosition(position!);
     ctrl = newCtrl;
+    if (mounted) setState(() {});
   }
 
   /// Handler to dispatch callbacks corresponding to the event
@@ -137,7 +141,6 @@ class _WebViewState extends State<WebView> {
   /// Hide and dispose WebView when this widget is disposed
   @override
   void dispose() {
-    shown = false;
     subscription?.cancel();
     if (widget.controller == null) {
       // if ctrl is null that means it is still being initialised
@@ -154,19 +157,12 @@ class _WebViewState extends State<WebView> {
 
   @override
   Widget build(BuildContext context) {
-    // PaintBounds reports the change in the position of this widget.
-    // Whenever that happens update the position of WebView. And if
-    // this is the first report then make WebView visible.
-    return _PaintBounds(
-      onBoundsChange: (Rect p) async {
-        position = p;
-        await ctrl?.setPosition(p);
+    if (ctrl == null) {
+      return widget.background ?? SizedBox.expand();
+    }
 
-        if (widget.autoVisible && ctrl != null && !shown) {
-          await ctrl?.show();
-          shown = true;
-        }
-      },
+    return WebViewFrame(
+      controller: ctrl!,
       child: widget.background ?? SizedBox.expand(),
     );
   }
