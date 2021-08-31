@@ -27,6 +27,9 @@ class WebViewController {
   bool _hasDisposed = false;
   bool get hasDisposed => _hasDisposed;
 
+  bool _hasInitialised = false;
+  bool get hasInitialised => _hasInitialised;
+
   /// Returns list of active WebView instance IDs
   static Future<List<String>> activeWebViews() async {
     final webViewIDs = await _webview.invokeMethod("activeWebViews", {});
@@ -57,6 +60,7 @@ class WebViewController {
           .listen(_onEvent);
     }
     await _webview.invokeMethod("init", {"id": _id});
+    _hasInitialised = true;
   }
 
   /// [eventStream] gives raw [WebViewEvent] from the instance
