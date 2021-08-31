@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:io';
 
 part 'events.dart';
 
@@ -65,12 +66,15 @@ class WebViewController {
     if (data["type"] == "exec_result") {
       final id = data["data"]["id"] as String;
       final result = data["data"]["result"];
-      if (result is String)
-        _execs[id]!.complete(json.decode(result));
-      else if (result is Map)
+      if (Platform.isAndroid) {
+        try {
+          _execs[id]!.complete(json.decode(result));
+        } catch (e) {
+          _execs[id]!.completeError(result);
+        }
+      } else {
         _execs[id]!.complete(result);
-      else
-        _execs[id]!.complete(null);
+      }
       _execs.remove(id);
     } else if (data["type"] == "page_start") {
       _events.add(PageStartEvent._(
@@ -164,7 +168,7 @@ class WebViewController {
   /// loading or error happens
   Future<void> load(String url) async {
     _load = Completer();
-    _webview.invokeMethod("load", {"url": url, "id": _id});
+    await _webview.invokeMethod("load", {"url": url, "id": _id});
     return _load!.future;
   }
 
@@ -172,7 +176,7 @@ class WebViewController {
   /// loading
   Future<void> loadHTML(String html) async {
     _load = Completer();
-    _webview.invokeMethod("loadHTML", {
+    await _webview.invokeMethod("loadHTML", {
       "html": html,
       "id": _id,
     });
