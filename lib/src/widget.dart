@@ -107,6 +107,7 @@ class _WebViewState extends State<WebView> {
     WebViewController newCtrl = widget.controller ?? WebViewController();
     if (!newCtrl.hasInitialised) {
       await newCtrl.init();
+      if (widget.url != null) newCtrl.load(widget.url!);
     }
     subscription = newCtrl.eventStream.listen(onEvent);
     if (widget.enableDebugging)
@@ -114,7 +115,6 @@ class _WebViewState extends State<WebView> {
     if (widget.errorPage != null) await newCtrl.setErrorPage(widget.errorPage!);
     if (widget.denyList != null) await newCtrl.setDenyList(widget.denyList!);
     if (widget.autoVisible) await newCtrl.show();
-    if (widget.url != null) newCtrl.load(widget.url!);
     // widget got disposed while initialising
     // so cleanup resources
     if (disposeAfterInit) {
