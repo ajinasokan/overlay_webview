@@ -236,6 +236,12 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
+              ElevatedButton(
+                child: Text("Clear cookies"),
+                onPressed: () async {
+                  await webView.clearCookies();
+                },
+              ),
             ],
           ),
           // Expanded(

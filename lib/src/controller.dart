@@ -232,4 +232,11 @@ class WebViewController {
       "id": _id,
     });
   }
+
+  /// Clear all cookies associated with the webview sessions
+  Future<void> clearCookies() async {
+    return _webview.invokeMethod("clearCookies", {
+      "id": _id,
+    });
+  }
 }

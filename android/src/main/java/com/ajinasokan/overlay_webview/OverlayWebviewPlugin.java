@@ -1,5 +1,11 @@
 package com.ajinasokan.overlay_webview;
 
+import android.content.Context;
+import android.os.Build;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.ValueCallback;
+
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
@@ -30,8 +36,25 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
     final PermissionHandler permissionHandler = new PermissionHandler(this);
     final HashMap<String, WebViewManager> webViews = new HashMap<>();
 
+    // From: https://github.com/react-native-cookies/cookies/blob/master/android/src/main/java/com/reactnativecommunity/cookies/CookieManagerModule.java
+    private CookieSyncManager mCookieSyncManager;
+
+    private void initCookieSyncManager(Context context) {
+        this.mCookieSyncManager = CookieSyncManager.createInstance(context);
+    }
+
+    private CookieManager getCookieManager() throws Exception {
+        try {
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setAcceptCookie(true);
+            return cookieManager;
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
+    }
+
     @Override
-    public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
+    public void onMethodCall(@NonNull MethodCall call, @NonNull final Result result) {
         String webViewID = call.argument("id");
         WebViewManager webView = webViews.get(webViewID);
 
@@ -62,6 +85,29 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
                     entry.getValue().dispose();
                 }
                 entry.setValue(null);
+            }
+        } else if (call.method.equals("clearCookies")) {
+            try {
+                CookieManager cookieManager = getCookieManager();
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                    cookieManager.removeAllCookie();
+                    cookieManager.removeSessionCookie();
+                    mCookieSyncManager.sync();
+                    result.success(null);
+                    return;
+                } else {
+                    cookieManager.removeAllCookies(new ValueCallback<Boolean>() {
+                        @Override
+                        public void onReceiveValue(Boolean value) {
+                            result.success(null);
+                        }
+                    });
+                    cookieManager.flush();
+                    return;
+                }
+            } catch (Exception e) {
+                result.error("cookie_clear_fail", "Unable to clear cookies. Exception: " + e.getMessage(), null);
+                return;
             }
         } else {
             // using before init
@@ -151,6 +197,7 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
         final EventChannel events = new EventChannel(registrar.messenger(), EVENT_CHANNEL);
         OverlayWebviewPlugin instance = new OverlayWebviewPlugin();
         PermissionHandler.setActivity(registrar.activity());
+        instance.initCookieSyncManager(registrar.activity());
         channel.setMethodCallHandler(instance);
         events.setStreamHandler(instance);
     }
@@ -172,6 +219,7 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
     @Override
     public void onAttachedToActivity(ActivityPluginBinding binding) {
         PermissionHandler.setActivity(binding.getActivity());
+        initCookieSyncManager(binding.getActivity());
         binding.addRequestPermissionsResultListener(permissionHandler);
     }
 

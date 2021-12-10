@@ -91,6 +91,17 @@ public class SwiftOverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHa
             }
             webviews.removeAll()
         }
+        else if(call.method == "clearCookies") {
+            if #available(iOS 11.0, *) {
+                let cookieStore = WKWebsiteDataStore.default().httpCookieStore
+                cookieStore.getAllCookies {
+                    cookies in
+                    for cookie in cookies {
+                        cookieStore.delete(cookie)
+                    }
+                }
+            }
+        }
         else if(call.method == "enableDebugging") {
         }
         else {

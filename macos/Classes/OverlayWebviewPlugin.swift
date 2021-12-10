@@ -91,6 +91,17 @@ public class OverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHandler
             }
             webviews.removeAll()
         }
+        else if(call.method == "clearCookies") {
+            if #available(macOS 10.13, *) {
+                let cookieStore = WKWebsiteDataStore.default().httpCookieStore
+                cookieStore.getAllCookies {
+                    cookies in
+                    for cookie in cookies {
+                        cookieStore.delete(cookie)
+                    }
+                }
+            }
+        }
         else if(call.method == "enableDebugging") {
         }
         else {
