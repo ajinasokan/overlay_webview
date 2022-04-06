@@ -161,6 +161,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
             rect = CGRect(x: 0, y: 0, width: 100, height: 100)
         }
         webview = WKWebView(frame: rect!, configuration: webCfg);
+        webview!.translatesAutoresizingMaskIntoConstraints = false
         
         super.init()
         
@@ -212,7 +213,8 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     }
     
     public func position(l: CGFloat, t: CGFloat, w: CGFloat, h: CGFloat) {
-        webview?.frame = CGRect(x: l, y: t, width: w, height: h)
+        let view = WebviewManager.rootView()
+        webview!.frame = CGRect(x: l, y: view!.frame.size.height - h - t, width: w, height: h)
     }
     
     public func setDenyList(patterns: Dictionary<String, String>) {
