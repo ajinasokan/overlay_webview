@@ -37,8 +37,10 @@ class _MyAppState extends State<MyApp> {
       body: Column(
         children: <Widget>[
           Wrap(
+            spacing: 0,
+            runSpacing: 0,
             children: <Widget>[
-              ElevatedButton(
+              TextButton(
                 child: Text("Toggle width"),
                 onPressed: () async {
                   setState(() {
@@ -46,19 +48,19 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Active WebViews"),
                 onPressed: () async {
                   print(await WebViewController.activeWebViews());
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Dispose All"),
                 onPressed: () async {
                   await WebViewController.disposeAll();
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Init"),
                 onPressed: () async {
                   await webView.init();
@@ -66,19 +68,19 @@ class _MyAppState extends State<MyApp> {
                   setState(() {});
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Google"),
                 onPressed: () {
                   webView.load("https://google.com");
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("DO"),
                 onPressed: () {
                   webView.load("http://speedtest-blr1.digitalocean.com");
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Downloads"),
                 onPressed: () {
                   webView.loadHTML("""
@@ -112,7 +114,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("onMessage"),
                 onPressed: () {
                   webView.loadHTML("""
@@ -131,7 +133,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Post Message"),
                 onPressed: () async {
                   await webView.loadHTML("""
@@ -149,32 +151,32 @@ class _MyAppState extends State<MyApp> {
                   await webView.postMessage("hello from flutter");
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Show"),
                 onPressed: () {
                   webView.show();
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Set Pos"),
                 onPressed: () {
                   webView.setPosition(Rect.fromLTWH(0, 400, 400, 300));
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Hide"),
                 onPressed: () {
                   webView.hide();
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Exec"),
                 onPressed: () async {
                   print(await webView
                       .exec("JSON.parse(JSON.stringify(window.location))"));
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Deny Google"),
                 onPressed: () {
                   webView.setDenyList({
@@ -182,14 +184,14 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Fullpage"),
                 onPressed: () async {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => FullPage()));
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Window creation"),
                 onPressed: () async {
                   await webView.loadHTML("""
@@ -200,33 +202,33 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Back"),
                 onPressed: () async {
                   webView.back();
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Forward"),
                 onPressed: () async {
                   webView.forward();
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Error load mainFrame"),
                 onPressed: () async {
                   webView.load("http://google.com");
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Error load iframe"),
                 onPressed: () async {
                   webView.loadHTML("""
-                  <iframe src='http://google.com'>
+                  <iframe width=800 height=800 src='http://google.com'>
                   """);
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Dialogs"),
                 onPressed: () async {
                   webView.loadHTML("""
@@ -236,10 +238,30 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              ElevatedButton(
+              TextButton(
                 child: Text("Clear cookies"),
                 onPressed: () async {
                   await webView.clearCookies();
+                },
+              ),
+              TextButton(
+                child: Text("loadHTML without baseURL"),
+                onPressed: () async {
+                  webView.loadHTML("""
+                  <script>
+                    document.write("<h1>" + window.location + "</h1>");
+                  </script>
+                  """);
+                },
+              ),
+              TextButton(
+                child: Text("loadHTML with baseURL"),
+                onPressed: () async {
+                  webView.loadHTML("""
+                  <script>
+                    document.write("<h1>" + window.location + "</h1>");
+                  </script>
+                  """, baseURL: "https://google.com");
                 },
               ),
             ],
@@ -262,6 +284,13 @@ class _MyAppState extends State<MyApp> {
                 url: "https://google.com",
                 controller: webView,
                 onPageNewWindow: (e) {
+                  print(e.url);
+                },
+                onPageError: (e) {
+                  print(e.errorCode);
+                  print(e.errorDescription);
+                },
+                onPageEnd: (e) {
                   print(e.url);
                 },
                 errorPage: "custom error page<br>"

@@ -1,4 +1,4 @@
-package com.ajinasokan.overlay_webview_example;
+package com.ajinasokan.example;
 
 import io.flutter.embedding.android.FlutterActivity;
 

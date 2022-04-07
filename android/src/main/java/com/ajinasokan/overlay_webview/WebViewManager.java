@@ -129,7 +129,7 @@ public class WebViewManager {
                             .replaceAll("\\{\\{errorURL\\}\\}", failingUrl)
                             .replaceAll("\\{\\{errorCode\\}\\}", errorCode+"")
                             .replaceAll("\\{\\{errorDescription\\}\\}", description);
-                    loadHTML(html);
+                    loadHTML(html, null);
                 }
             }
 
@@ -154,7 +154,7 @@ public class WebViewManager {
                                 .replaceAll("\\{\\{errorURL\\}\\}", currentUrl)
                                 .replaceAll("\\{\\{errorCode\\}\\}", error.getErrorCode()+"")
                                 .replaceAll("\\{\\{errorDescription\\}\\}", error.getDescription().toString());
-                        loadHTML(html);
+                        loadHTML(html, null);
                     }
                 }
             }
@@ -244,10 +244,10 @@ public class WebViewManager {
         webView.loadUrl(url);
     }
 
-    void loadHTML(String html) {
+    void loadHTML(String html, String baseURL) {
         // loadData requires url encoding, loadDataWithBaseURL doesnt
         // Refer: https://developer.android.com/reference/android/webkit/WebView#loadDataWithBaseURL(java.lang.String,%20java.lang.String,%20java.lang.String,%20java.lang.String,%20java.lang.String)
-        webView.loadDataWithBaseURL(null, html, "text/html", "UTF-8", null);
+        webView.loadDataWithBaseURL(baseURL, html, "text/html", "UTF-8", null);
     }
 
     void enableDebugging(boolean value) {

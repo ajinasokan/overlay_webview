@@ -59,7 +59,8 @@ public class OverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHandler
         }
         else if(call.method == "loadHTML") {
             let html = (call.arguments as! NSDictionary)["html"] as! String
-            webviews[webviewID]?.loadHTML(html: html)
+            let baseURL = (call.arguments as! NSDictionary)["base_url"] as? String
+            webviews[webviewID]?.loadHTML(html: html, baseURL: baseURL)
         }
         else if(call.method == "errorPage") {
             let html = (call.arguments as! NSDictionary)["html"] as! String
@@ -196,8 +197,8 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         webview?.load(URLRequest(url: URL(string: url)!))
     }
     
-    public func loadHTML(html: String) {
-        webview?.loadHTMLString(html, baseURL: nil)
+    public func loadHTML(html: String, baseURL: String? = nil) {
+        webview?.loadHTMLString(html, baseURL: baseURL == nil ? nil : URL(string: baseURL!))
     }
     
     public func back() {

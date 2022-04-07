@@ -137,7 +137,7 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
             } else if (call.method.equals("load")) {
                 webView.load((String) call.argument("url"));
             } else if (call.method.equals("loadHTML")) {
-                webView.loadHTML((String) call.argument("html"));
+                webView.loadHTML((String) call.argument("html"), (String) call.argument("base_url"));
             } else if (call.method.equals("errorPage")) {
                 webView.errorPage = ((String) call.argument("html"));
             } else if (call.method.equals("enableDebugging")) {

@@ -179,11 +179,12 @@ class WebViewController {
 
   /// Load [html] to the WebView. Returns [Future] that waits until page is finished
   /// loading
-  Future<void> loadHTML(String html) async {
+  Future<void> loadHTML(String html, {String? baseURL}) async {
     _load = Completer();
     await _webview.invokeMethod("loadHTML", {
       "html": html,
       "id": _id,
+      "base_url": baseURL,
     });
     return _load!.future;
   }
