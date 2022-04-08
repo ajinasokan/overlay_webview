@@ -151,6 +151,8 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
                 );
             } else if (call.method.equals("denyList")) {
                 webView.setDenyList((Map) call.argument("items"));
+            } else if (call.method.equals("userAgent")) {
+                webView.setUserAgent((String) call.argument("user_agent"));
             } else if (call.method.equals("exec")) {
                 String execID = call.argument("exec_id");
                 String expression = call.argument("expression");

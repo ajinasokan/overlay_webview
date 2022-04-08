@@ -213,6 +213,9 @@ class WebViewController {
   Future<void> setDenyList(Map<String, String> items) async =>
       _webview.invokeMethod("denyList", {"id": _id, "items": items});
 
+  Future<void> setUserAgent(String userAgent) async =>
+      _webview.invokeMethod("userAgent", {"id": _id, "user_agent": userAgent});
+
   /// Sets the position of WebView to [p]
   Future<void> setPosition(Rect p) async {
     _webview.invokeMapMethod("position", {

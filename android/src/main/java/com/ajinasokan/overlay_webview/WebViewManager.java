@@ -276,6 +276,10 @@ public class WebViewManager {
         denyPatterns = patterns;
     }
 
+    void setUserAgent(String url) {
+        webView.getSettings().setUserAgentString(url);
+    }
+
     void show() {
         webView.setVisibility(View.VISIBLE);
         webView.bringToFront();

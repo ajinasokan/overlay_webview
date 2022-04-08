@@ -77,6 +77,9 @@ public class SwiftOverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHa
         else if(call.method == "denyList") {
             webviews[webviewID]?.setDenyList(patterns: args["items"] as! Dictionary<String, String>)
         }
+        else if(call.method == "userAgent") {
+            webviews[webviewID]?.setUserAgent(userAgent: (call.arguments as! NSDictionary)["user_agent"] as! String)
+        }
         else if(call.method == "exec") {
             let exec_id = (call.arguments as! NSDictionary)["exec_id"] as! String
             let expression = (call.arguments as! NSDictionary)["expression"] as! String
@@ -219,6 +222,10 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     
     public func setDenyList(patterns: Dictionary<String, String>) {
         self.denyPatterns = patterns
+    }
+    
+    public func setUserAgent(userAgent: String) {
+        webview!.customUserAgent = userAgent
     }
     
     public func eval(exec_id: String, expression: String) {
