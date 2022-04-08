@@ -52,6 +52,18 @@ class WebViewController {
     }
   }
 
+  /// Create instance with a unique ID
+  static WebViewController fromID(String id) {
+    final wv = WebViewController(id: id);
+    if (wv._subscription == null) {
+      wv._subscription = _webviewEventsStream
+          .where((data) => data["id"] == id)
+          .listen(wv._onEvent);
+    }
+    wv._hasInitialised = true;
+    return wv;
+  }
+
   /// Initialise native WebView instance and subscribe to its events
   Future<void> init() async {
     if (_subscription == null) {
@@ -240,6 +252,20 @@ class WebViewController {
   /// Clear all cookies associated with the webview sessions
   Future<void> clearCookies() async {
     return _webview.invokeMethod("clearCookies", {
+      "id": _id,
+    });
+  }
+
+  /// Clear all data associated with the webview sessions
+  Future<void> clearStorage() async {
+    return _webview.invokeMethod("clearStorage", {
+      "id": _id,
+    });
+  }
+
+  /// Clear cache associated with the webview sessions
+  Future<void> clearCache() async {
+    return _webview.invokeMethod("clearCache", {
       "id": _id,
     });
   }

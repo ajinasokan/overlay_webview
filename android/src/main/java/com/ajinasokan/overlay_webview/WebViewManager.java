@@ -285,6 +285,10 @@ public class WebViewManager {
         webView.bringToFront();
     }
 
+    void clearCache() {
+        webView.clearCache(true);
+    }
+
     void hide() {
         webView.setVisibility(View.GONE);
     }

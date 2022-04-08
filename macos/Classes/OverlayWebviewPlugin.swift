@@ -106,6 +106,31 @@ public class OverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHandler
                 }
             }
         }
+        else if(call.method == "clearStorage") {
+            WKWebsiteDataStore.default().removeData(ofTypes: [
+                WKWebsiteDataTypeLocalStorage,
+                WKWebsiteDataTypeSessionStorage,
+                WKWebsiteDataTypeIndexedDBDatabases,
+                WKWebsiteDataTypeWebSQLDatabases
+            ], modifiedSince: Date(timeIntervalSince1970: 0), completionHandler:{ })
+            if #available(macOS 10.13.4, *) {
+                WKWebsiteDataStore.default().removeData(ofTypes: [
+                    WKWebsiteDataTypeServiceWorkerRegistrations
+                ], modifiedSince: Date(timeIntervalSince1970: 0), completionHandler:{ })
+            }
+        }
+        else if(call.method == "clearCache") {
+            WKWebsiteDataStore.default().removeData(ofTypes: [
+                WKWebsiteDataTypeDiskCache,
+                WKWebsiteDataTypeMemoryCache,
+                WKWebsiteDataTypeOfflineWebApplicationCache
+            ], modifiedSince: Date(timeIntervalSince1970: 0), completionHandler:{ })
+            if #available(macOS 10.13.4, *) {
+                WKWebsiteDataStore.default().removeData(ofTypes: [
+                    WKWebsiteDataTypeFetchCache
+                ], modifiedSince: Date(timeIntervalSince1970: 0), completionHandler:{ })
+            }
+        }
         else if(call.method == "enableDebugging") {
         }
         else {

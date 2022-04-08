@@ -28,19 +28,35 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
+  Widget smallButton({
+    required Widget child,
+    required VoidCallback onPressed,
+  }) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        color: Colors.blue,
+        padding: EdgeInsets.all(4),
+        margin: EdgeInsets.all(2),
+        child: DefaultTextStyle(
+          style: TextStyle(color: Colors.white),
+          child: child,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Plugin example app'),
-      ),
       body: Column(
         children: <Widget>[
+          SizedBox(height: MediaQuery.of(context).viewPadding.top),
           Wrap(
             spacing: 0,
             runSpacing: 0,
             children: <Widget>[
-              TextButton(
+              smallButton(
                 child: Text("Toggle width"),
                 onPressed: () async {
                   setState(() {
@@ -48,19 +64,19 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Active WebViews"),
                 onPressed: () async {
                   print(await WebViewController.activeWebViews());
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Dispose All"),
                 onPressed: () async {
                   await WebViewController.disposeAll();
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Init"),
                 onPressed: () async {
                   await webView.init();
@@ -68,19 +84,19 @@ class _MyAppState extends State<MyApp> {
                   setState(() {});
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Google"),
                 onPressed: () {
                   webView.load("https://google.com");
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("DO"),
                 onPressed: () {
                   webView.load("http://speedtest-blr1.digitalocean.com");
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Downloads"),
                 onPressed: () {
                   webView.loadHTML("""
@@ -114,7 +130,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("onMessage"),
                 onPressed: () {
                   webView.loadHTML("""
@@ -133,7 +149,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Post Message"),
                 onPressed: () async {
                   await webView.loadHTML("""
@@ -151,32 +167,32 @@ class _MyAppState extends State<MyApp> {
                   await webView.postMessage("hello from flutter");
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Show"),
                 onPressed: () {
                   webView.show();
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Set Pos"),
                 onPressed: () {
                   webView.setPosition(Rect.fromLTWH(0, 400, 400, 300));
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Hide"),
                 onPressed: () {
                   webView.hide();
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Exec"),
                 onPressed: () async {
                   print(await webView
                       .exec("JSON.parse(JSON.stringify(window.location))"));
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Deny Google"),
                 onPressed: () {
                   webView.setDenyList({
@@ -184,14 +200,14 @@ class _MyAppState extends State<MyApp> {
                   });
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Fullpage"),
                 onPressed: () async {
                   Navigator.of(context)
                       .push(MaterialPageRoute(builder: (_) => FullPage()));
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Window creation"),
                 onPressed: () async {
                   await webView.loadHTML("""
@@ -202,25 +218,25 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Back"),
                 onPressed: () async {
                   webView.back();
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Forward"),
                 onPressed: () async {
                   webView.forward();
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Error load mainFrame"),
                 onPressed: () async {
                   webView.load("http://google.com");
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Error load iframe"),
                 onPressed: () async {
                   webView.loadHTML("""
@@ -228,7 +244,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("Dialogs"),
                 onPressed: () async {
                   webView.loadHTML("""
@@ -238,13 +254,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              TextButton(
-                child: Text("Clear cookies"),
-                onPressed: () async {
-                  await webView.clearCookies();
-                },
-              ),
-              TextButton(
+              smallButton(
                 child: Text("loadHTML without baseURL"),
                 onPressed: () async {
                   webView.loadHTML("""
@@ -254,7 +264,7 @@ class _MyAppState extends State<MyApp> {
                   """);
                 },
               ),
-              TextButton(
+              smallButton(
                 child: Text("loadHTML with baseURL"),
                 onPressed: () async {
                   webView.loadHTML("""
@@ -262,6 +272,42 @@ class _MyAppState extends State<MyApp> {
                     document.write("<h1>" + window.location + "</h1>");
                   </script>
                   """, baseURL: "https://google.com");
+                },
+              ),
+              smallButton(
+                child: Text("Show webview info"),
+                onPressed: () async {
+                  webView.loadHTML("""
+                  <script>
+                    document.write("Localstorage of google.com: <p>" + Object.entries(localStorage) + "</p>");
+                    document.write("Cookies of google.com: <p>" + document.cookie + "</p>");
+                    document.write("User agent: <p>" + navigator.userAgent + "</p>");
+                  </script>
+                  """, baseURL: "https://www.google.com");
+                },
+              ),
+              smallButton(
+                child: Text("Clear cookies"),
+                onPressed: () async {
+                  await webView.clearCookies();
+                },
+              ),
+              smallButton(
+                child: Text("Clear storage"),
+                onPressed: () async {
+                  await webView.clearStorage();
+                },
+              ),
+              smallButton(
+                child: Text("Clear cache"),
+                onPressed: () async {
+                  await webView.clearCache();
+                },
+              ),
+              smallButton(
+                child: Text("Change user agent"),
+                onPressed: () async {
+                  await webView.setUserAgent("Test UA");
                 },
               ),
             ],

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 import android.webkit.ValueCallback;
+import android.webkit.WebStorage;
 
 import androidx.annotation.NonNull;
 
@@ -107,6 +108,24 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
                 }
             } catch (Exception e) {
                 result.error("cookie_clear_fail", "Unable to clear cookies. Exception: " + e.getMessage(), null);
+                return;
+            }
+        } else if (call.method.equals("clearStorage")) {
+            try {
+                WebStorage.getInstance().deleteAllData();
+                result.success(null);
+                return;
+            } catch (Exception e) {
+                result.error("storage_clear_fail", "Unable to clear storage. Exception: " + e.getMessage(), null);
+                return;
+            }
+        } else if (call.method.equals("clearCache")) {
+            try {
+                webView.clearCache();
+                result.success(null);
+                return;
+            } catch (Exception e) {
+                result.error("cache_clear_fail", "Unable to clear cache. Exception: " + e.getMessage(), null);
                 return;
             }
         } else {
