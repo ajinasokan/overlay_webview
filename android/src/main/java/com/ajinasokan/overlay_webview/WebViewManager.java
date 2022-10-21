@@ -80,8 +80,7 @@ public class WebViewManager {
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setDomStorageEnabled(true);
-        webView.getSettings().setAppCacheEnabled(true);
-        
+
         // webView.getSettings().setLoadWithOverviewMode(true);
         // webView.getSettings().setUseWideViewPort(true);
 
@@ -133,7 +132,7 @@ public class WebViewManager {
                 }
             }
 
-            @TargetApi(android.os.Build.VERSION_CODES.M)
+            @TargetApi(Build.VERSION_CODES.M)
             @Override
             public void onReceivedError(final WebView view, WebResourceRequest request, final WebResourceError error) {
                 if (view == null)
