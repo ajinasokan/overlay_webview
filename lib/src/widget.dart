@@ -126,6 +126,15 @@ class _WebViewState extends State<WebView> {
     if (mounted) setState(() {});
   }
 
+  @override
+  void didUpdateWidget(covariant WebView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (widget.controller != oldWidget.controller) {
+      initWebView();
+    }
+  }
+
   /// Handler to dispatch callbacks corresponding to the event
   void onEvent(WebViewEvent e) {
     if (e is PageStartEvent) widget.onPageStart?.call(e);
@@ -164,8 +173,11 @@ class _WebViewState extends State<WebView> {
     }
 
     return WebViewFrame(
-      controller: ctrl!,
-      child: widget.background ?? SizedBox.expand(),
+      getController: () => ctrl!,
+      child: SizedBox(
+        key: ValueKey(ctrl.hashCode),
+        child: widget.background ?? SizedBox.expand(),
+      ),
     );
   }
 }

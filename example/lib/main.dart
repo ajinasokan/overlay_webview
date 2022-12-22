@@ -19,7 +19,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final webView = WebViewController(id: "main");
+  WebViewController webView = WebViewController(id: "main");
   bool isInit = false;
   bool isInf = false;
 
@@ -308,6 +308,15 @@ class _MyAppState extends State<MyApp> {
                 child: Text("Change user agent"),
                 onPressed: () async {
                   await webView.setUserAgent("Test UA");
+                },
+              ),
+              smallButton(
+                child: Text("Rebuild control"),
+                onPressed: () async {
+                  await webView.dispose();
+                  webView = WebViewController(id: "main");
+                  await webView.init();
+                  setState(() {});
                 },
               ),
             ],
