@@ -29,7 +29,7 @@ public class SwiftOverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHa
         
         if(call.method == "init") {
             if(webviews[webviewID] == nil) {
-                webviews[webviewID] = WebviewManager(id: webviewID, plugin: self)
+                webviews[webviewID] = WebviewManager(id: webviewID, disableSharedWorker: args["disableSharedWorker"] as! Bool, plugin: self)
             } else {
                 webviews[webviewID]?.hide()
             }
@@ -180,13 +180,18 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     // For giving back page with error
     var _lastURL = ""
     
-    public init(id: String, plugin: SwiftOverlayWebviewPlugin) {
+    public init(id: String, disableSharedWorker: Bool, plugin: SwiftOverlayWebviewPlugin) {
         self.id = id;
         self.plugin = plugin;
         
         let webCfg:WKWebViewConfiguration = WKWebViewConfiguration()
         let userController:WKUserContentController = WKUserContentController()
         webCfg.userContentController = userController;
+        
+        if disableSharedWorker {
+            let dropSharedWorkersScript = WKUserScript(source: "delete window.SharedWorker;", injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: false)
+            userController.addUserScript(dropSharedWorkersScript)
+        }
         
         let view = WebviewManager.rootView()
         var rect : CGRect?

@@ -320,6 +320,15 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               smallButton(
+                child: Text("Rebuild without shared worker"),
+                onPressed: () async {
+                  await webView.dispose();
+                  webView = WebViewController(id: "main");
+                  await webView.init(disableSharedWorker: true);
+                  setState(() {});
+                },
+              ),
+              smallButton(
                 child: Text("isVisible"),
                 onPressed: () async {
                   print(await webView.isVisible());

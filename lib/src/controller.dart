@@ -64,13 +64,17 @@ class WebViewController {
   }
 
   /// Initialise native WebView instance and subscribe to its events
-  Future<void> init() async {
+  /// [disableSharedWorker] removes SharedWorker key from window object in iOS WKWebView to prevent https://developer.apple.com/forums/thread/718757. No op in other platforms.
+  Future<void> init({bool disableSharedWorker = false}) async {
     if (_subscription == null) {
       _subscription = _webviewEventsStream
           .where((data) => data["id"] == _id)
           .listen(_onEvent);
     }
-    await _webview.invokeMethod("init", {"id": _id});
+    await _webview.invokeMethod("init", {
+      "id": _id,
+      "disableSharedWorker": disableSharedWorker,
+    });
     _hasInitialised = true;
   }
 
