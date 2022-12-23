@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 
@@ -168,6 +167,10 @@ class WebViewController {
 
   /// Hide WebView
   Future<void> hide() async => _webview.invokeMethod("hide", {"id": _id});
+
+  /// Check if WebView is visible
+  Future<bool?> isVisible() async =>
+      _webview.invokeMethod<bool>("isVisible", {"id": _id});
 
   /// Reload currently loaded page
   Future<void> reload() async => _webview.invokeMethod("reload", {"id": _id});

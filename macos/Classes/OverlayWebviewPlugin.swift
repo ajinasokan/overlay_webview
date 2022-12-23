@@ -44,6 +44,10 @@ public class OverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHandler
         else if(call.method == "hide") {
             webviews[webviewID]?.hide()
         }
+         else if(call.method == "isVisible") {
+            result(webviews[webviewID]?.isVisible())
+            return
+        }
         else if(call.method == "reload") {
             webviews[webviewID]?.reload()
         }
@@ -219,6 +223,10 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     
     public func hide() {
         webview?.removeFromSuperview()
+    }
+
+    public func isVisible() -> Bool {
+        webview!.isDescendant(of: WebviewManager.rootView()!)
     }
     
     public func load(url: String) {

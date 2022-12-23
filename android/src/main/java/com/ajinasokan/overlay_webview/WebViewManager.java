@@ -292,6 +292,10 @@ public class WebViewManager {
         webView.setVisibility(View.GONE);
     }
 
+    boolean isVisible() {
+        return webView.getVisibility() == View.VISIBLE;
+    }
+
     void reload() {
         webView.reload();
     }

@@ -147,6 +147,9 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
                 webView.show();
             } else if (call.method.equals("hide")) {
                 webView.hide();
+            } else if (call.method.equals("isVisible")) {
+                result.success(webView.isVisible());
+                return;
             } else if (call.method.equals("reload")) {
                 webView.reload();
             } else if (call.method.equals("back")) {

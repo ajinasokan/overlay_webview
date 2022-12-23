@@ -319,6 +319,12 @@ class _MyAppState extends State<MyApp> {
                   setState(() {});
                 },
               ),
+              smallButton(
+                child: Text("isVisible"),
+                onPressed: () async {
+                  print(await webView.isVisible());
+                },
+              ),
             ],
           ),
           // Expanded(
