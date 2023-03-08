@@ -211,6 +211,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         webview!.isOpaque = true
         webview!.backgroundColor = UIColor.clear
         webview!.scrollView.backgroundColor = UIColor.clear
+        webview!.scrollView.contentInsetAdjustmentBehavior = .never
     }
 
     static public func rootView() -> UIView? {
