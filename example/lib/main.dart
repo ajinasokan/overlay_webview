@@ -334,6 +334,14 @@ class _MyAppState extends State<MyApp> {
                   print(await webView.isVisible());
                 },
               ),
+              smallButton(
+                child: Text("JS window.open"),
+                onPressed: () async {
+                  webView.loadHTML("""
+                  <button onclick="window.open('https://google.com')">Call window.open</button>
+                  """);
+                },
+              ),
             ],
           ),
           // Expanded(
@@ -354,14 +362,14 @@ class _MyAppState extends State<MyApp> {
                 url: "https://google.com",
                 controller: webView,
                 onPageNewWindow: (e) {
-                  print(e.url);
+                  print("onPageNewWindow ${e.url}");
                 },
                 onPageError: (e) {
-                  print(e.errorCode);
-                  print(e.errorDescription);
+                  print("errorCode ${e.errorCode}");
+                  print("errorDesc ${e.errorDescription}");
                 },
                 onPageEnd: (e) {
-                  print(e.url);
+                  print("onPageEnd ${e.url}");
                 },
                 errorPage: "custom error page<br>"
                     "errorCode: {{errorCode}}<br>"

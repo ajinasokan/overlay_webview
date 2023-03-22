@@ -375,6 +375,17 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
         }
     }
     
+    public func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+        
+        plugin.sendEvent(id: id, type: "page_new_window", data: [
+            "url": navigationAction.request.url!.absoluteString,
+            "can_go_back": webview!.canGoBack,
+            "can_go_forward": webview!.canGoBack,
+        ])
+        
+        return nil
+    }
+    
     public func webView(_ webView: WKWebView, runJavaScriptAlertPanelWithMessage message: String, initiatedByFrame frame: WKFrameInfo,
                  completionHandler: @escaping () -> Void) {
 

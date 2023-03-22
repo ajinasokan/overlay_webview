@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
@@ -77,6 +79,7 @@ public class WebViewManager {
         webView.setDownloadListener(downloadHandler);
 
         webView.getSettings().setSupportMultipleWindows(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.getSettings().setAllowContentAccess(true);
         webView.getSettings().setDomStorageEnabled(true);
@@ -195,7 +198,7 @@ public class WebViewManager {
             public boolean onCreateWindow(final WebView view, boolean dialog, boolean userGesture, Message resultMsg)
             {
                 final String url;
-                Log.d("a type", view.getHitTestResult().getType()+"");
+                // Log.d("a type", view.getHitTestResult().getType()+"");
                 if(view.getHitTestResult().getType() == SRC_IMAGE_ANCHOR_TYPE) {
                     Message href = view.getHandler().obtainMessage();
                     view.requestFocusNodeHref(href);
@@ -203,12 +206,58 @@ public class WebViewManager {
                 } else {
                     url = view.getHitTestResult().getExtra();
                 }
-                plugin.sendEvent(webViewID,"page_new_window", new HashMap<String, Object>(){ {
-                    put("url", url);
-                    put("can_go_back", view.canGoBack());
-                    put("can_go_forward", view.canGoForward());
-                }});
-                return false;
+                if(url == null) {
+                    // Log.d("window.open", "onCreateWindow"+resultMsg);
+
+                    // TODO: verify if this causes memory leak
+                    final WebView targetWebView = new WebView(PermissionHandler.getActivity()); // pass a context
+                    WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+                    transport.setWebView(targetWebView);
+                    resultMsg.sendToTarget();
+
+                    targetWebView.setWebViewClient(new WebViewClient() {
+                        @SuppressLint("NewApi")
+                        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                            return shouldOverrideUrlLoading(view, request.getUrl().toString());
+                        }
+
+                        @Override
+                        public boolean shouldOverrideUrlLoading(WebView View, final String newUrl) {
+                            // Log.d("shouldOverrideUrl", newUrl);
+                            if (newUrl != null && !newUrl.isEmpty()) {
+                                plugin.sendEvent(webViewID, "page_new_window", new HashMap<String, Object>() {
+                                    {
+                                        put("url", newUrl);
+                                        put("can_go_back", true);
+                                        put("can_go_forward", false);
+                                    }
+                                });
+                            }
+
+                            // TODO: figure out a better way to clean up webview
+                            final Handler handler = new Handler(Looper.getMainLooper());
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    targetWebView.destroy();
+                                }
+                            }, 1000);
+
+                            return true;
+                        }
+                    });
+                } else {
+                    plugin.sendEvent(webViewID, "page_new_window", new HashMap<String, Object>() {
+                        {
+                            put("url", url);
+                            put("can_go_back", view.canGoBack());
+                            put("can_go_forward", view.canGoForward());
+                        }
+                    });
+                }
+                // true means we handle this
+                // necessary for resultMsg.sendToTarget(); to work
+                return true;
             }
         });
 
