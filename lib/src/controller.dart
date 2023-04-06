@@ -86,6 +86,14 @@ class WebViewController {
     if (data["type"] == "exec_result") {
       final id = data["data"]["id"] as String;
       final result = data["data"]["result"];
+
+      /// Sometimes Flutter thread dies but webview doesnt. When Flutter
+      /// restart again the webview sends back the events from the previous
+      /// Flutter instance. But it is not in the _execs map. So ignore these.
+      if (!_execs.containsKey(id)) {
+        return;
+      }
+
       if (Platform.isAndroid) {
         try {
           _execs[id]!.complete(json.decode(result));
