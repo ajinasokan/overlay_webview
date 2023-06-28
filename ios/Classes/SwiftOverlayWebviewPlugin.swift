@@ -136,6 +136,9 @@ public class SwiftOverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHa
             }
         }
         else if(call.method == "enableDebugging") {
+            let value = (call.arguments as! NSDictionary)["value"] as! Bool
+            webviews[webviewID]?.enableDebugging(value: value)
+            return
         }
         else {
             result(FlutterMethodNotImplemented)
@@ -229,6 +232,12 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     
     public func hide() {
         webview!.removeFromSuperview()
+    }
+
+    public func enableDebugging(value: Bool) {
+        if #available(iOS 16.4, *) {
+            webview!.isInspectable = value
+        }
     }
 
     public func isVisible() -> Bool {

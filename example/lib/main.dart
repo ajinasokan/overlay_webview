@@ -361,6 +361,7 @@ class _MyAppState extends State<MyApp> {
               child: WebView(
                 url: "https://google.com",
                 controller: webView,
+                // enableDebugging: true,
                 onPageNewWindow: (e) {
                   print("onPageNewWindow ${e.url}");
                 },

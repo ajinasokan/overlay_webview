@@ -136,6 +136,9 @@ public class OverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHandler
             }
         }
         else if(call.method == "enableDebugging") {
+            let value = (call.arguments as! NSDictionary)["value"] as! Bool
+            webviews[webviewID]?.enableDebugging(value: value)
+            return
         }
         else {
             result(FlutterMethodNotImplemented)
@@ -205,7 +208,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     }
     
     public static func rootView() -> NSView? {
-        return NSApplication.shared.keyWindow?.contentViewController?.view
+        return NSApp.windows.first?.contentViewController?.view
     }
     
     public func dispose() {
@@ -223,6 +226,12 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     
     public func hide() {
         webview?.removeFromSuperview()
+    }
+
+    public func enableDebugging(value: Bool) {
+        if #available(macOS 13.3, *) {
+            webview!.isInspectable = value
+        }
     }
 
     public func isVisible() -> Bool {
@@ -248,7 +257,7 @@ public class WebviewManager : NSObject, WKNavigationDelegate, WKUIDelegate, WKSc
     public func reload() {
         webview?.reload()
     }
-    
+
     public func position(l: CGFloat, t: CGFloat, w: CGFloat, h: CGFloat) {
         let view = WebviewManager.rootView()
         webview!.frame = CGRect(x: l, y: view!.frame.size.height - h - t, width: w, height: h)
