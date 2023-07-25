@@ -138,7 +138,6 @@ public class SwiftOverlayWebviewPlugin: NSObject, FlutterPlugin, FlutterStreamHa
         else if(call.method == "enableDebugging") {
             let value = (call.arguments as! NSDictionary)["value"] as! Bool
             webviews[webviewID]?.enableDebugging(value: value)
-            return
         }
         else {
             result(FlutterMethodNotImplemented)
