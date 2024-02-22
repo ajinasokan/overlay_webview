@@ -167,9 +167,9 @@ class WebViewController {
   /// Disposes the instance of WebView
   Future<void> dispose() async {
     if (_subscription == null) return;
-    _webview.invokeMethod("dispose", {"id": _id});
-    _subscription!.cancel();
-    _events.close();
+    await _webview.invokeMethod("dispose", {"id": _id});
+    await _subscription!.cancel();
+    await _events.close();
     _subscription = null;
     _hasDisposed = true;
   }
