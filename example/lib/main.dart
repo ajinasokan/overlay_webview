@@ -97,6 +97,12 @@ class _MyAppState extends State<MyApp> {
                 },
               ),
               smallButton(
+                child: Text("Crash renderer"),
+                onPressed: () {
+                  webView.load("chrome://crash");
+                },
+              ),
+              smallButton(
                 child: Text("Downloads"),
                 onPressed: () {
                   webView.loadHTML("""
