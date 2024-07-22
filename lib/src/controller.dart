@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
@@ -71,10 +72,19 @@ class WebViewController {
           .where((data) => data["id"] == _id)
           .listen(_onEvent);
     }
-    await _webview.invokeMethod("init", {
-      "id": _id,
-      "disableSharedWorker": disableSharedWorker,
-    });
+    try {
+      await _webview.invokeMethod("init", {
+        "id": _id,
+        "disableSharedWorker": disableSharedWorker,
+      });
+    } on PlatformException catch (e) {
+      if (e.code == 'webview_already_initialised') {
+        // activity got killed but webview is alive
+        // noop
+      } else {
+        rethrow;
+      }
+    }
     _hasInitialised = true;
   }
 
