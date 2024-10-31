@@ -22,12 +22,14 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
+    namespace 'com.ajinasokan.overlay_webview'
+
     compileSdkVersion 33
 
     defaultConfig {
         minSdkVersion 16
     }
-    lintOptions {
+    lint {
         disable 'InvalidPackage'
     }
 }
