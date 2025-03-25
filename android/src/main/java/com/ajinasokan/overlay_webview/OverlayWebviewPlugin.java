@@ -23,7 +23,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 /**
  * OverlayWebviewPlugin
@@ -212,16 +211,6 @@ public class OverlayWebviewPlugin implements FlutterPlugin, MethodCallHandler, S
         final MethodChannel channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), METHOD_CHANNEL);
         final EventChannel events = new EventChannel(flutterPluginBinding.getBinaryMessenger(), EVENT_CHANNEL);
         OverlayWebviewPlugin instance = new OverlayWebviewPlugin();
-        channel.setMethodCallHandler(instance);
-        events.setStreamHandler(instance);
-    }
-
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), METHOD_CHANNEL);
-        final EventChannel events = new EventChannel(registrar.messenger(), EVENT_CHANNEL);
-        OverlayWebviewPlugin instance = new OverlayWebviewPlugin();
-        PermissionHandler.setActivity(registrar.activity());
-        instance.initCookieSyncManager(registrar.activity());
         channel.setMethodCallHandler(instance);
         events.setStreamHandler(instance);
     }
